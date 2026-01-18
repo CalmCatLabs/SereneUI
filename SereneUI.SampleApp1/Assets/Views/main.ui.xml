@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Page Stylesheet="Assets/Style/serene_default.css" 
+      DataContextType="SereneUI.SampleApp1.ViewModels.MainViewModel">
+    <Panel Class="top-panel">
+        <TextBlock>{Binding Title}</TextBlock>
+    </Panel>
+    <Panel Margin="0,52,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+        <Button HorizontalAlignment="Left" OnClick="{Command ClickCommand}">
+                <TextBlock Class="arial_12">{Binding TestButtonText}</TextBlock>
+        </Button>
+    </Panel>
+    <Panel Padding="20,20,20,20" HorizontalAlignment="Left" VerticalAlignment="Center" Width="350">
+        <StackPanel Orientation="Vertical"  HorizontalAlignment="Stretch">
+            <Panel Padding="15,15,15,15" HorizontalAlignment="Stretch">
+                <Button HorizontalAlignment="Center" Width="150" Height="142" VerticalAlignment="Center" OnClick="{Command ClickCommand}">
+                    <TextBlock Class="arial_12" HorizontalAlignment="Left">You can click me</TextBlock>
+                </Button>            
+            </Panel>
+            <Panel Padding="15,15,15,15" HorizontalAlignment="Stretch">
+                <Button HorizontalAlignment="Stretch"  VerticalAlignment="Center" IsEnabled="false" OnClick="{Command ClickCommand}">
+                    <TextBlock Class="arial_12">I am disabled</TextBlock>
+                </Button>
+            </Panel>
+            <Panel Padding="15,15,15,15" HorizontalAlignment="Stretch">
+                <Button HorizontalAlignment="Stretch"  VerticalAlignment="Center" OnClick="{Command ClickCommand}">
+                    <TextBlock Class="arial_12">Click me</TextBlock>
+                </Button>
+            </Panel>
+            <Panel Padding="15,15,15,15" HorizontalAlignment="Stretch">
+                <Button Class="exit" HorizontalAlignment="Stretch" VerticalAlignment="Center" OnClick="{Command ExitClickCommand}">
+                    <TextBlock Class="arial_12">{Binding Exit}</TextBlock>
+                </Button>
+            </Panel>
+        </StackPanel>
+    </Panel>
+
+    <Panel Class="bottom-panel">
+        <StackPanel Orientation="Horizontal">
+            <Panel Padding="15,15,15,15" HorizontalAlignment="Stretch">
+                <Button HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                    <TextBlock VerticalAlignment="Center" Class="arial_12">New Game</TextBlock>
+                </Button>
+            </Panel>
+            <Panel Padding="15,15,15,15" HorizontalAlignment="Stretch">
+                <Button HorizontalAlignment="Stretch"  VerticalAlignment="Center">
+                    <TextBlock VerticalAlignment="Center" Class="arial_12">Load Game</TextBlock>
+                </Button>
+            </Panel>
+            <Panel Padding="15,15,15,15" HorizontalAlignment="Stretch">
+                <Button HorizontalAlignment="Stretch"  VerticalAlignment="Center">
+                    <TextBlock VerticalAlignment="Center" Class="arial_12">Settings Game</TextBlock>
+                </Button>
+            </Panel>
+            <Panel Padding="15,15,15,15" HorizontalAlignment="Stretch">
+                <Button Class="exit" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                    <TextBlock VerticalAlignment="Center" Class="arial_12">Exit</TextBlock>
+                </Button>
+            </Panel>
+        </StackPanel>        
+    </Panel>
+</Page>

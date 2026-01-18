@@ -1,0 +1,69 @@
+﻿:disabled {
+    BackgroundColor: #eeeeee;
+}
+
+
+Panel {
+    /* Padding="5,5,5,5" HorizontalAlignment="Stretch" VerticalAlignment="Top" BackgroundColor="#E6C0E9" */
+    Padding: 5, 5, 5, 5;
+    BackgroundColor: #E8DBD8;
+}
+
+Panel.top-panel {
+    /* Padding="5,5,5,5" HorizontalAlignment="Stretch" VerticalAlignment="Top" BackgroundColor="#E6C0E9" */
+    Padding: 10, 10, 10, 10;
+    HorizontalAlignment: Stretch;
+    VerticalAlignment: Top;
+    BackgroundColor: #D9B8C4;
+}
+
+Panel.bottom-panel {
+    /* Padding="5,5,5,5" HorizontalAlignment="Stretch" VerticalAlignment="Top" BackgroundColor="#E6C0E9" */
+    Padding: 5, 5, 5, 5;
+    HorizontalAlignment: Stretch;
+    VerticalAlignment: Bottom;
+    BackgroundColor: #D9B8C4;
+}
+
+TextBlock {
+    Font: Fonts/arial_18;
+    HorizontalAlignment: Left;
+    VerticalAlignment: Center;
+    Color: #351D2E;
+}
+
+TextBlock.arial_12 {
+    Font: Fonts/arial_12;
+}
+
+Button {
+    Padding: 15,15,15,15;
+    BackgroundColor: #D9B8C4;
+    Color: #351D2E;
+    Font: Fonts/arial_12;
+}
+
+Button:hover {
+    Padding: 15,15,15,15;
+    BackgroundColor: #E9C8D4;
+    Color: #351D2E;
+    Font: Fonts/arial_12;
+}
+
+Button:active {
+    Padding: 15,15,15,15;
+    BackgroundColor: #f9e8f4;
+    Color: #351D2E;
+    Font: Fonts/arial_12;
+}
+
+Button:disabled {
+    Padding: 15,15,15,15;
+    BackgroundColor: #a998a4;
+    Color: #351D2E;
+    Font: Fonts/arial_12;
+}
+
+Button.exit {
+    BackgroundColor: #B87A91;
+}

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <LangVersion>14</LangVersion>
+        <Nullable>enable</Nullable>
+        <TargetFramework>net10.0</TargetFramework>
+        <RootNamespace>SereneUI.Shared</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="ExCSS" Version="4.3.1" />
+        <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.4.1">
+            <PrivateAssets>All</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Serene.Common\Serene.Common.csproj" />
+    </ItemGroup>
+</Project>
