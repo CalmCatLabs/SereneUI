@@ -168,6 +168,18 @@ public class Button : Panel
     protected override void OnUpdate(GameTime gameTime, UiInputData inputData)
     {
         base.OnUpdate(gameTime, inputData);
+
+        // if (!_isMouseOver && _wasMousePressed)
+        // {
+        //     _wasMousePressed = false;
+        // }
+        //
+        // if (_isMouseOver && inputData.LeftMousePressed) _wasMousePressed = true;
+    }
+
+    public override void HandleInput(UiInputData inputData)
+    {
+        base.HandleInput(inputData);
         if (!IsEnabled) return;
         if (_isMouseOver && !inputData.LeftMousePressed)
         {
@@ -187,13 +199,6 @@ public class Button : Panel
             RaiseClick(inputData.MousePosition, inputData);
             _wasMousePressed = false;
         }
-
-        // if (!_isMouseOver && _wasMousePressed)
-        // {
-        //     _wasMousePressed = false;
-        // }
-        //
-        // if (_isMouseOver && inputData.LeftMousePressed) _wasMousePressed = true;
     }
     
     private void RaiseClick(Microsoft.Xna.Framework.Point pos, UiInputData input)

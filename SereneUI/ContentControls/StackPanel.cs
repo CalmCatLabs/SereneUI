@@ -27,6 +27,13 @@ public class StackPanel : ItemsControlBase
         VerticalAlignment   = VerticalAlignment.Top;
     }
     
+    
+    public override void HandleInput(UiInputData inputData)
+    {
+        Children.ForEach(child => child.HandleInput(inputData));
+        base.HandleInput(inputData);
+    }
+    
     protected override void OnMeasure(in Point availableSize)
     {
         // Innenraum, den Children "sehen"
@@ -69,104 +76,103 @@ public class StackPanel : ItemsControlBase
             contentH + Padding.Vertical
         );
     }
-
    
-protected override void OnArrange(in Rectangle finalRect)
-{
-    if (Children.Count < 1) return;
-
-    // Innenraum des Panels
-    var innerRect = finalRect.Deflate(Padding);
-
-    int cursorX = innerRect.X;
-    int cursorY = innerRect.Y;
-
-    foreach (var child in Children)
+    protected override void OnArrange(in Rectangle finalRect)
     {
-        if (!child.IsVisible) continue;
+        if (Children.Count < 1) return;
 
-        int cw = child.Size.X;
-        int ch = child.Size.Y;
+        // Innenraum des Panels
+        var innerRect = finalRect.Deflate(Padding);
 
-        // "Slot" = Bereich, in dem das Kind ausgerichtet werden darf (ohne Margin)
-        // Quer zur Stack-Richtung ist der Slot so groß wie der Innenraum.
-        // In Stack-Richtung ist er so groß wie das Kind (damit es nicht alles überlappt).
-        Rectangle slot;
+        int cursorX = innerRect.X;
+        int cursorY = innerRect.Y;
 
-        if (Orientation == Orientation.Horizontal)
+        foreach (var child in Children)
         {
-            int slotX = cursorX + child.Margin.Left;
-            int slotY = innerRect.Y + child.Margin.Top;
+            if (!child.IsVisible) continue;
 
-            int slotW = Math.Max(0, cw); // Stack-Richtung: nur Kindbreite
-            int slotH = Math.Max(0, innerRect.Height - child.Margin.Vertical); // Quer: voller Innenraum
+            int cw = child.Size.X;
+            int ch = child.Size.Y;
 
-            slot = new Rectangle(slotX, slotY, slotW, slotH);
-        }
-        else // Vertical
-        {
-            int slotX = innerRect.X + child.Margin.Left;
-            int slotY = cursorY + child.Margin.Top;
+            // "Slot" = Bereich, in dem das Kind ausgerichtet werden darf (ohne Margin)
+            // Quer zur Stack-Richtung ist der Slot so groß wie der Innenraum.
+            // In Stack-Richtung ist er so groß wie das Kind (damit es nicht alles überlappt).
+            Rectangle slot;
 
-            int slotW = Math.Max(0, innerRect.Width - child.Margin.Horizontal); // Quer: voller Innenraum
-            int slotH = Math.Max(0, ch); // Stack-Richtung: nur Kindhöhe
+            if (Orientation == Orientation.Horizontal)
+            {
+                int slotX = cursorX + child.Margin.Left;
+                int slotY = innerRect.Y + child.Margin.Top;
 
-            slot = new Rectangle(slotX, slotY, slotW, slotH);
-        }
+                int slotW = Math.Max(0, cw); // Stack-Richtung: nur Kindbreite
+                int slotH = Math.Max(0, innerRect.Height - child.Margin.Vertical); // Quer: voller Innenraum
 
-        // Alignment innerhalb des Slots
-        int x = slot.X;
-        int y = slot.Y;
+                slot = new Rectangle(slotX, slotY, slotW, slotH);
+            }
+            else // Vertical
+            {
+                int slotX = innerRect.X + child.Margin.Left;
+                int slotY = cursorY + child.Margin.Top;
 
-        // Horizontal alignment (wirkt immer quer/innerhalb slotW)
-        switch (child.HorizontalAlignment)
-        {
-            case HorizontalAlignment.Left:
-                x = slot.X;
-                break;
-            case HorizontalAlignment.Center:
-                x = slot.X + (slot.Width - cw) / 2;
-                break;
-            case HorizontalAlignment.Right:
-                x = slot.Right - cw;
-                break;
-            case HorizontalAlignment.Stretch:
-                x = slot.X;
-                cw = Math.Max(0, slot.Width);
-                break;
-        }
+                int slotW = Math.Max(0, innerRect.Width - child.Margin.Horizontal); // Quer: voller Innenraum
+                int slotH = Math.Max(0, ch); // Stack-Richtung: nur Kindhöhe
 
-        // Vertical alignment (wirkt immer quer/innerhalb slotH)
-        switch (child.VerticalAlignment)
-        {
-            case VerticalAlignment.Top:
-                y = slot.Y;
-                break;
-            case VerticalAlignment.Center:
-                y = slot.Y + (slot.Height - ch) / 2;
-                break;
-            case VerticalAlignment.Bottom:
-                y = slot.Bottom - ch;
-                break;
-            case VerticalAlignment.Stretch:
-                y = slot.Y;
-                ch = Math.Max(0, slot.Height);
-                break;
-        }
+                slot = new Rectangle(slotX, slotY, slotW, slotH);
+            }
 
-        child.Arrange(new Rectangle(child.PositionX ?? x, child.PositionY ?? y, Math.Max(0, cw), Math.Max(0, ch)));
+            // Alignment innerhalb des Slots
+            int x = slot.X;
+            int y = slot.Y;
 
-        // Cursor entlang der Stack-Richtung fortschieben (inkl. Margin!)
-        if (Orientation == Orientation.Horizontal)
-        {
-            cursorX += child.Margin.Left + cw + child.Margin.Right;
-        }
-        else
-        {
-            cursorY += child.Margin.Top + ch + child.Margin.Bottom;
+            // Horizontal alignment (wirkt immer quer/innerhalb slotW)
+            switch (child.HorizontalAlignment)
+            {
+                case HorizontalAlignment.Left:
+                    x = slot.X;
+                    break;
+                case HorizontalAlignment.Center:
+                    x = slot.X + (slot.Width - cw) / 2;
+                    break;
+                case HorizontalAlignment.Right:
+                    x = slot.Right - cw;
+                    break;
+                case HorizontalAlignment.Stretch:
+                    x = slot.X;
+                    cw = Math.Max(0, slot.Width);
+                    break;
+            }
+
+            // Vertical alignment (wirkt immer quer/innerhalb slotH)
+            switch (child.VerticalAlignment)
+            {
+                case VerticalAlignment.Top:
+                    y = slot.Y;
+                    break;
+                case VerticalAlignment.Center:
+                    y = slot.Y + (slot.Height - ch) / 2;
+                    break;
+                case VerticalAlignment.Bottom:
+                    y = slot.Bottom - ch;
+                    break;
+                case VerticalAlignment.Stretch:
+                    y = slot.Y;
+                    ch = Math.Max(0, slot.Height);
+                    break;
+            }
+
+            child.Arrange(new Rectangle(child.PositionX ?? x, child.PositionY ?? y, Math.Max(0, cw), Math.Max(0, ch)));
+
+            // Cursor entlang der Stack-Richtung fortschieben (inkl. Margin!)
+            if (Orientation == Orientation.Horizontal)
+            {
+                cursorX += child.Margin.Left + cw + child.Margin.Right;
+            }
+            else
+            {
+                cursorY += child.Margin.Top + ch + child.Margin.Bottom;
+            }
         }
     }
-}
 
     protected override void OnDraw(SpriteBatch spriteBatch)
     {

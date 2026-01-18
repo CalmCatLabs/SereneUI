@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -38,13 +39,6 @@ public class Page : ItemsControlBase
     {
         int maxZ = _zIndex.Any() ? _zIndex.Max(p => p.Value) : 0;
         SetZIndex(maxZ + 1, element);
-    }
-
-    // --- Local layout bounds API (the important part) ---
-    public void SetChildBounds(IUiElement? element, Rectangle localBounds)
-    {
-        if (element is not null) _layoutBounds[element] = localBounds; // local inside the Page
-        InvalidateArrange();
     }
 
     public bool TryGetChildBounds(IUiElement? element, out Rectangle localBounds)
@@ -132,6 +126,18 @@ public class Page : ItemsControlBase
     {
         // Draw from back to front (low z -> high z)
         EnumerateChildrenForDraw().ForEach(child => child.Draw(spriteBatch));
+    }
+
+    protected override void OnUpdate(GameTime gameTime, UiInputData inputData)
+    {
+        base.OnUpdate(gameTime, inputData);
+        var childHit = HitTestTopMostChild(inputData.MousePosition);
+        if (childHit is not null)
+        {
+            Debug.WriteLine($"{childHit.Id}, {childHit.GetType().Name}, {inputData.MousePosition}");
+            childHit.HandleInput(inputData);
+            
+        }
     }
 
     private IEnumerable<IUiElement> EnumerateChildrenForDraw()

@@ -9,10 +9,10 @@
                 <TextBlock Class="arial_12">{Binding TestButtonText}</TextBlock>
         </Button>
     </Panel>
-    <Panel Padding="20,20,20,20" HorizontalAlignment="Left" VerticalAlignment="Center" Width="350">
-        <StackPanel Orientation="Vertical"  HorizontalAlignment="Stretch">
-            <Panel Padding="15,15,15,15" HorizontalAlignment="Stretch">
-                <Button HorizontalAlignment="Center" Width="150" Height="142" VerticalAlignment="Center" OnClick="{Command ClickCommand}">
+    <Panel Id="panel" Padding="20,20,20,20" HorizontalAlignment="Left" VerticalAlignment="Center" Width="350">
+        <StackPanel Id="stack_panel" Orientation="Vertical"  HorizontalAlignment="Stretch">
+            <Panel Id="inner_panel" Padding="15,15,15,15" HorizontalAlignment="Stretch">
+                <Button Id="btn" HorizontalAlignment="Center" Width="150" Height="142" VerticalAlignment="Center" OnClick="{Command ClickCommand}">
                     <TextBlock Class="arial_12" HorizontalAlignment="Left">You can click me</TextBlock>
                 </Button>            
             </Panel>
@@ -34,12 +34,16 @@
         </StackPanel>
     </Panel>
     
-    <Panel PositionX="500" PositionY="400" Width="200" Height="200" 
+    <Panel Id="drag"
+           PositionX="500" PositionY="400" Width="200" Height="200" 
            IsDraggable="true" 
            OnMouseDown="{Command MouseDownCommand}" 
            OnMouseUp="{Command MouseUpCommand}"
            OnMouseLeave="{Command MouseLeaveCommand}">
-        <TextBlock Class="arial_12">{Binding LastDragEvent}</TextBlock>
+        <StackPanel>
+            <TextBlock Class="arial_12">I am draggable.</TextBlock>
+            <TextBlock Class="arial_12">{Binding LastDragEvent}</TextBlock>            
+        </StackPanel>
     </Panel>
 
     <Panel Class="bottom-panel">

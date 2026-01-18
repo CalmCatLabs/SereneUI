@@ -143,6 +143,7 @@ public class SereneUiSystem(Game game, BuildService buildService)
             uiNode.InnerText = node.Value;
         }
         
+        
         foreach (var element in node.Elements())
         {
             uiNode.Children.Add(MakeNodes(element));

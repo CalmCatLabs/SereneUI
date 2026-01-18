@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Serene.Common.Extensions;
+using Serene.Common.Helpers;
 using SereneUI.Converters;
 using SereneUI.Interfaces;
 using SereneUI.Shared.DataStructures;
@@ -37,6 +38,11 @@ public static class BuilderCommon
                     }
                 }
             });
+        
+        if (string.IsNullOrWhiteSpace(element.Id))
+        {
+            element.Id = RandomIdGenerator.Get(prefix: "ui-");
+        }
     }
     
     public static Thickness ParseThickness(string s)

@@ -117,6 +117,12 @@ public class Panel : ContentControlBase
         Content.Arrange(new Rectangle(Content.PositionX ?? x, Content.PositionY ?? y, Math.Max(0, cw), Math.Max(0, ch)));
     }
 
+    public override void HandleInput(UiInputData inputData)
+    {
+        Content?.HandleInput(inputData);
+        base.HandleInput(inputData);
+    }
+
     protected override void OnDraw(SpriteBatch spriteBatch)
     {
         if (!IsVisible) return;

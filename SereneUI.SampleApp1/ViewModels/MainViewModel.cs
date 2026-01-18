@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using SereneUI.Base;
 using SereneUI.Shared.Enums;
+using SereneUI.Shared.Interfaces;
 
 namespace SereneUI.SampleApp1.ViewModels;
 
@@ -56,7 +57,6 @@ public class MainViewModel : ViewModelBase
     {
         ClickCommand = new RelayCommand((sender, args) =>
         {
-            Debug.WriteLine(sender?.ToString());
             TestButtonText = $"count: {count++}";
             ClearColor = new Color(_random.Next(0, 255), _random.Next(0, 255), _random.Next(0, 255));
         });

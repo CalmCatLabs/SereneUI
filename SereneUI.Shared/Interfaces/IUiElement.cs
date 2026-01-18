@@ -164,4 +164,6 @@ public interface IUiElement
     /// <param name="screenPoint">Position on the screen.</param>
     /// <returns>true when hit, otherwise false.</returns>
     bool HitTest(Point screenPoint);
+    
+    void HandleInput(UiInputData inputData);
 }

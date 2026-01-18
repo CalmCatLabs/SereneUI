@@ -177,6 +177,9 @@ public abstract class UiElementBase : IUiElement
     /// </summary>
     private Point _dragOffsetInElement;
 
+    private int _height;
+    private int _width;
+
     /// <inheritdoc />
     public void ApplyStyle(string pseudoClass = "")
     {
@@ -273,42 +276,6 @@ public abstract class UiElementBase : IUiElement
             return;
         }
         
-        var mousePosition = inputData.MousePosition;
-        bool hit = HitTest(mousePosition);
-        
-        // enter
-        if (hit && !_isMouseOver)
-        {
-            _isMouseOver = true;
-            RaiseMouseEnter(mousePosition, inputData);
-        }
-        
-        // over
-        if (hit && _isMouseOver)
-        {
-            RaiseMouseOver(mousePosition, inputData);
-        }
-        
-        // leave
-        if (!hit && _isMouseOver)
-        {
-            _isMouseOver = false;
-            RaiseMouseLeave(mousePosition, inputData);
-        }
-
-        if (hit && !_isMouseDown && inputData.LeftMouseDown)
-        {
-            _isMouseDown = true;
-            RaiseMouseDown(mousePosition, inputData);
-        }
-        
-        if (hit && _isMouseDown && inputData.LeftMouseReleased)
-        {
-            _isMouseDown = false;
-            RaiseMouseUp(mousePosition, inputData);
-        }
-        HandleDrag(inputData, mousePosition, hit);
-        
         OnUpdate(gameTime, inputData);
         UpdateChildren(gameTime, inputData);
     }
@@ -343,8 +310,11 @@ public abstract class UiElementBase : IUiElement
 
             // Wenn PositionX/Y relativ zum Parent:
             // newRel = newAbs - parentAbs
-            PositionX = newAbs.X; 
-            PositionY = newAbs.Y;
+            PositionX = Math.Max(0 - (int)Bounds.Width / 2, newAbs.X); 
+            PositionY = Math.Max(0 - (int)Bounds.Height / 2, newAbs.Y);
+            PositionX = Math.Min(_width - (int)Bounds.Width / 2, PositionX.Value); 
+            PositionY = Math.Min(_height - (int)Bounds.Height / 2, PositionY.Value); 
+            Debug.WriteLine($"Dragging {PositionX}x{PositionY} | {_width}x{_height}");
             InvalidateArrange();
         }
 
@@ -466,6 +436,8 @@ public abstract class UiElementBase : IUiElement
     public void Draw(SpriteBatch spriteBatch)
     {
         if (!IsVisible) return;
+        _height = spriteBatch.GraphicsDevice.Viewport.Height;
+        _width = spriteBatch.GraphicsDevice.Viewport.Width;
         OnDraw(spriteBatch);
         IsVisualDirty = false;
     }
@@ -563,7 +535,46 @@ public abstract class UiElementBase : IUiElement
         // Position bleibt, Größe wird festgezurrt
         return new Rectangle(rect.X, rect.Y, w, h);
     }
-    
+
+    public virtual void HandleInput(UiInputData inputData)
+    {
+        var mousePosition = inputData.MousePosition;
+        bool hit = HitTest(mousePosition);
+        
+        // enter
+        if (hit && !_isMouseOver)
+        {
+            _isMouseOver = true;
+            RaiseMouseEnter(mousePosition, inputData);
+        }
+        
+        // over
+        if (hit && _isMouseOver)
+        {
+            RaiseMouseOver(mousePosition, inputData);
+        }
+        
+        // leave
+        if (!hit && _isMouseOver)
+        {
+            _isMouseOver = false;
+            RaiseMouseLeave(mousePosition, inputData);
+        }
+
+        if (hit && !_isMouseDown && inputData.LeftMouseDown)
+        {
+            _isMouseDown = true;
+            RaiseMouseDown(mousePosition, inputData);
+        }
+        
+        if (hit && _isMouseDown && inputData.LeftMouseReleased)
+        {
+            _isMouseDown = false;
+            RaiseMouseUp(mousePosition, inputData);
+        }
+        HandleDrag(inputData, mousePosition, hit);
+    }
+
     /// <summary>
     /// Stub for child classes to hang into the measurement.
     /// </summary>
@@ -581,4 +592,5 @@ public abstract class UiElementBase : IUiElement
     /// </summary>
     /// <param name="spriteBatch">Monogames SpriteBatch.</param>
     protected abstract void OnDraw(SpriteBatch spriteBatch);
+    
 }
