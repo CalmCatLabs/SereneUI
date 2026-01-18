@@ -154,7 +154,7 @@ protected override void OnArrange(in Rectangle finalRect)
                 break;
         }
 
-        child.Arrange(new Rectangle(x, y, Math.Max(0, cw), Math.Max(0, ch)));
+        child.Arrange(new Rectangle(child.PositionX ?? x, child.PositionY ?? y, Math.Max(0, cw), Math.Max(0, ch)));
 
         // Cursor entlang der Stack-Richtung fortschieben (inkl. Margin!)
         if (Orientation == Orientation.Horizontal)

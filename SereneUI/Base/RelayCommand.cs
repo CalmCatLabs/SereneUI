@@ -4,19 +4,14 @@ using SereneUI.Shared.Interfaces;
 
 namespace SereneUI.Base;
 
-public class RelayCommand<TArgs> : ICommand<TArgs>
+public class RelayCommand<TArgs>(Action<object?, TArgs?> execute, Func<object?, TArgs?, bool> canExecute)
+    : ICommand<TArgs>
 {
-    private readonly Action<object?, TArgs?> _execute;
-    private readonly Func<object?, TArgs?, bool>? _canExecute;
+    private readonly Action<object?, TArgs?> _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+    private readonly Func<object?, TArgs?, bool>? _canExecute = canExecute;
     
     public event EventHandler? CanExecuteChanged;
 
-    public RelayCommand(Action<object?, TArgs?> execute, Func<object?, TArgs?, bool> canExecute)
-    {
-        _execute = execute ?? throw new ArgumentNullException(nameof(execute));
-        _canExecute = canExecute;
-    }
-    
     public bool CanExecute(object? sender, TArgs? args)
         => _canExecute?.Invoke(sender, args) ?? true;
 
@@ -30,21 +25,15 @@ public class RelayCommand<TArgs> : ICommand<TArgs>
         => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
 }
 
-public class RelayCommand : ICommand
+public class RelayCommand(Action<object?, object?> execute, Func<object?, object?, bool>? canExecute = null)
+    : ICommand
 {
-    private readonly Action<object?, object?> _execute;
-    private readonly Func<object?, object?, bool>? _canExecute;
-    
+    private readonly Action<object?, object?> _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+
     public event EventHandler? CanExecuteChanged;
 
-    public RelayCommand(Action<object?, object?> execute, Func<object?, object?, bool>? canExecute)
-    {
-        _execute = execute ?? throw new ArgumentNullException(nameof(execute));
-        _canExecute = canExecute;
-    }
-    
     public bool CanExecute(object? sender, object? args = null)
-        => _canExecute?.Invoke(sender, args) ?? true;
+        => canExecute?.Invoke(sender, args) ?? true;
 
     public void Execute(object? sender, object? args = null)
     {

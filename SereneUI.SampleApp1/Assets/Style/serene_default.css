@@ -9,6 +9,12 @@ Panel {
     BackgroundColor: #E8DBD8;
 }
 
+Panel:drag {
+    /* Padding="5,5,5,5" HorizontalAlignment="Stretch" VerticalAlignment="Top" BackgroundColor="#E6C0E9" */
+    Padding: 5, 5, 5, 5;
+    BackgroundColor: #E8DBD888;
+}
+
 Panel.top-panel {
     /* Padding="5,5,5,5" HorizontalAlignment="Stretch" VerticalAlignment="Top" BackgroundColor="#E6C0E9" */
     Padding: 10, 10, 10, 10;

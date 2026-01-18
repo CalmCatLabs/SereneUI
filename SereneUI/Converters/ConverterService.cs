@@ -38,4 +38,15 @@ public static class ConverterService
         }
         return null;
     }
+    
+    public static bool TryConvert(Type targetType, string value, out object? result)
+    {
+        result = null;
+        if (Converters.TryGetValue(targetType, out var converter)
+            && converter.TryConvert(value, out result))
+        {
+            return true;
+        }
+        return false;
+    }
 }

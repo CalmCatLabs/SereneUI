@@ -28,6 +28,12 @@ public class MainViewModel : ViewModelBase
         set => SetProperty(ref field, value);
     } = "click me";
 
+    public string LastDragEvent
+    {
+        get;
+        set => SetProperty(ref field, value);
+    } = "none";
+
     public bool RequestExit
     {
         get;
@@ -38,6 +44,9 @@ public class MainViewModel : ViewModelBase
 
     public RelayCommand ClickCommand { get; set; }
     public RelayCommand ExitClickCommand { get; set; }
+    public RelayCommand MouseDownCommand { get; set; }
+    public RelayCommand MouseUpCommand { get; set; }
+    public RelayCommand MouseLeaveCommand { get; set; }
     
     public Color ClearColor { get; set; } = Color.Aquamarine;
 
@@ -50,11 +59,26 @@ public class MainViewModel : ViewModelBase
             Debug.WriteLine(sender?.ToString());
             TestButtonText = $"count: {count++}";
             ClearColor = new Color(_random.Next(0, 255), _random.Next(0, 255), _random.Next(0, 255));
-        }, null);
+        });
         
         ExitClickCommand = new RelayCommand((sender, args) =>
         {
             RequestExit = true;
-        }, null);
+        });
+
+        MouseDownCommand = new RelayCommand((sender, args) =>
+        {
+            LastDragEvent = nameof(MouseDownCommand);
+        });
+        
+        MouseUpCommand = new RelayCommand((sender, args) =>
+        {
+            LastDragEvent = nameof(MouseUpCommand);
+        });
+        
+        MouseLeaveCommand = new RelayCommand((sender, args) =>
+        {
+            LastDragEvent = nameof(MouseLeaveCommand);
+        });
     }
 }

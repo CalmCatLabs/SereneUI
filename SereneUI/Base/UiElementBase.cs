@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection.Metadata;
 using ExCSS;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -25,6 +26,12 @@ public abstract class UiElementBase : IUiElement
     
     public int? Width { get; set; }
     public int? Height { get; set; }
+    
+    public int? PositionX { get; set; }
+    public int? PositionY { get; set; }
+
+// Optional: Komfort
+    public bool HasFixedPosition => PositionX.HasValue || PositionY.HasValue;
     
     public Rectangle Bounds { get; set; }
     public Point Size { get; protected set; }
@@ -60,7 +67,6 @@ public abstract class UiElementBase : IUiElement
     public ICommand? OnMouseOver { get; set; }
     public ICommand? OnMouseDown { get; set; }
     public ICommand? OnMouseUp { get; set; }
-    
     public event EventHandler<UiMouseEventArgs> MouseEnter;
     public event EventHandler<UiMouseEventArgs> MouseLeave;
     public event EventHandler<UiMouseEventArgs> MouseOver;
@@ -68,6 +74,11 @@ public abstract class UiElementBase : IUiElement
     public event EventHandler<UiMouseEventArgs> MouseUp;
 
     protected bool _isMouseOver = false;
+    protected bool _isMouseDown = false;
+    private Point? _lastMousePosition;
+    private bool _isDragging;
+    private Point _dragOffsetInElement;   // Mausposition relativ zum Element (lokal)
+    private Point _startElementPos; 
 
     public void ApplyStyle(string pseudoClass = "")
     {
@@ -75,7 +86,7 @@ public abstract class UiElementBase : IUiElement
         var possibleSelectors = GetValidSelectors(pseudoClass);
         possibleSelectors.ForEach(selector =>
         {
-            var styleRule = Stylesheet.StyleRules.FirstOrDefault(sr => sr.SelectorText.Equals(selector));
+            var styleRule = Stylesheet.StyleRules.FirstOrDefault(sr => sr.SelectorText.Trim().Equals(selector.Trim()));
             if (styleRule is null) return;
 
             var properties = GetType().GetProperties();
@@ -172,11 +183,101 @@ public abstract class UiElementBase : IUiElement
             _isMouseOver = false;
             RaiseMouseLeave(mousePosition, inputData);
         }
+
+        if (hit && !_isMouseDown && inputData.LeftMouseDown)
+        {
+            _isMouseDown = true;
+            _lastMousePosition = inputData.MousePosition;
+            RaiseMouseDown(mousePosition, inputData);
+        }
+        
+        if (hit && _isMouseDown && inputData.LeftMouseReleased)
+        {
+            _isMouseDown = false;
+            _lastMousePosition = null;
+            RaiseMouseUp(mousePosition, inputData);
+        }
+
+        // if (IsDraggable && inputData.LeftMousePressed)
+        // {
+        //     var positionDelta = mousePosition - _lastMousePosition;
+        //     if (!positionDelta.Equals(Point.Zero))
+        //     {
+        //         Debug.WriteLine($"Mouse position delta: {positionDelta}");
+        //         Debug.WriteLine($"Mouse position old: {_lastMousePosition}");
+        //         Debug.WriteLine($"Mouse position new: {mousePosition}");
+        //         PositionX = mousePosition.X;
+        //         PositionY = mousePosition.Y;
+        //         _lastMousePosition = mousePosition;
+        //     }
+        // }
+        HandleDrag(inputData, mousePosition, hit);
+        
         OnUpdate(gameTime, inputData);
         UpdateChildren(gameTime, inputData);
     }
     
+    public void HandleDrag(UiInputData input, Point mouseInScreenOrUi, bool hit)
+    {
+        // 1) Koordinaten: wichtig -> mouseInParent
+        // Du brauchst die Mausposition im selben Koordinatensystem wie PositionX/Y.
+        // Wenn PositionX/Y relativ zum Parent sind: mouseInParent berechnen!
+        Point mouseInParent = mouseInScreenOrUi;
+        // TODO: falls du Screen hast: mouseInParent = mouseInScreenOrUi - parentAbsolutePos;
+
+        if (IsDraggable && input.LeftMouseDown && hit)
+        {
+            _isDragging = true;
+
+            // Element absolute pos im selben Raum wie mouseInScreenOrUi:
+            var elementAbs = new Point(Bounds.X, Bounds.Y);
+
+            // Offset: wo greifst du das Element an?
+            _dragOffsetInElement = mouseInScreenOrUi - elementAbs;
+            ApplyStyle(":drag");
+            InvalidateMeasure();
+            InvalidateVisual();
+            InvalidateArrange();
+        }
+
+        if (_isDragging && input.LeftMousePressed)
+        {
+            // Ziel: Element so bewegen, dass der anfängliche Griffpunkt unter der Maus bleibt
+            var newAbs = mouseInScreenOrUi - _dragOffsetInElement;
+
+            // Wenn PositionX/Y relativ zum Parent:
+            // newRel = newAbs - parentAbs
+            PositionX = newAbs.X; 
+            PositionY = newAbs.Y;
+            InvalidateArrange();
+        }
+
+        if (_isDragging && input.LeftMouseReleased)
+        {
+            _isDragging = false;
+            ApplyStyle();
+            InvalidateMeasure();
+            InvalidateVisual();
+            InvalidateArrange();
+        }
+    }
+    
     protected virtual void OnUpdate(GameTime gameTime, UiInputData inputData) { }
+    
+    private void RaiseMouseUp(Microsoft.Xna.Framework.Point pos, UiInputData input)
+    {
+        var args = new UiMouseEventArgs(pos, input);
+        MouseUp?.Invoke(this, args);
+        TryExecute(OnMouseUp, args, this);
+    }
+    
+    private void RaiseMouseDown(Microsoft.Xna.Framework.Point pos, UiInputData input)
+    {
+        var args = new UiMouseEventArgs(pos, input);
+        MouseDown?.Invoke(this, args);
+        TryExecute(OnMouseDown, args, this);
+    }
+    
     private void RaiseMouseEnter(Microsoft.Xna.Framework.Point pos, UiInputData input)
     {
         var args = new UiMouseEventArgs(pos, input);
@@ -193,6 +294,9 @@ public abstract class UiElementBase : IUiElement
     
     private void RaiseMouseLeave(Microsoft.Xna.Framework.Point pos, UiInputData input)
     {
+        _isMouseOver = false;
+        _isMouseDown = false;
+        
         var args = new UiMouseEventArgs(pos, input);
         MouseLeave?.Invoke(this, args);
         TryExecute(OnMouseLeave, args, this);

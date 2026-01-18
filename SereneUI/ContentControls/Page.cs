@@ -78,7 +78,6 @@ public class Page : ItemsControlBase
         {
             if (!child.IsVisible) continue;
 
-            // 1) If the user set local bounds via SetChildBounds -> absolute positioning
             if (TryGetChildBounds(child, out var local))
             {
                 // If width/height are 0 -> fallback to measured size
@@ -86,8 +85,8 @@ public class Page : ItemsControlBase
                 int h = local.Height > 0 ? local.Height : child.Size.Y;
 
                 // apply margin outside the child
-                int x = client.X + local.X + child.Margin.Left;
-                int y = client.Y + local.Y + child.Margin.Top;
+                int x = child.PositionX ?? client.X + local.X + child.Margin.Left;
+                int y = child.PositionY ?? client.Y + local.Y + child.Margin.Top;
 
                 w = Math.Max(0, w - child.Margin.Horizontal);
                 h = Math.Max(0, h - child.Margin.Vertical);
@@ -108,15 +107,14 @@ public class Page : ItemsControlBase
             int w2 = child.Size.X;
             int h2 = child.Size.Y;
 
-            int x2 = innerLeft;
-            int y2 = innerTop;
+            int x2 = child.PositionX ?? innerLeft;
+            int y2 = child.PositionY ?? innerTop;
 
             switch (child.HorizontalAlignment)
             {
                 case HorizontalAlignment.Stretch: x2 = innerLeft; w2 = innerW; break;
                 case HorizontalAlignment.Center:  x2 = innerLeft + (innerW - w2) / 2; break;
                 case HorizontalAlignment.Right:   x2 = innerRight - w2; break;
-                default:                          x2 = innerLeft; break; // Left
             }
 
             switch (child.VerticalAlignment)
@@ -124,7 +122,6 @@ public class Page : ItemsControlBase
                 case VerticalAlignment.Stretch: y2 = innerTop; h2 = innerH; break;
                 case VerticalAlignment.Center:  y2 = innerTop + (innerH - h2) / 2; break;
                 case VerticalAlignment.Bottom:  y2 = innerBottom - h2; break;
-                default:                        y2 = innerTop; break; // Top
             }
 
             child.Arrange(new Rectangle(x2, y2, Math.Max(0, w2), Math.Max(0, h2)));

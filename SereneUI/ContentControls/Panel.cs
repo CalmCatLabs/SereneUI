@@ -114,7 +114,7 @@ public class Panel : ContentControlBase
                 break;
         }
 
-        Content.Arrange(new Rectangle(x, y, Math.Max(0, cw), Math.Max(0, ch)));
+        Content.Arrange(new Rectangle(Content.PositionX ?? x, Content.PositionY ?? y, Math.Max(0, cw), Math.Max(0, ch)));
     }
 
     protected override void OnDraw(SpriteBatch spriteBatch)

@@ -2,6 +2,7 @@
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
+using Serene.Common.Extensions;
 using SereneUI.Converters;
 using SereneUI.Interfaces;
 using SereneUI.Shared.DataStructures;
@@ -14,46 +15,28 @@ public static class BuilderCommon
 {
     public static void SetCommonAttributes(IUiElement element, UiNode node)
     {
-        if (node.Attributes.TryGetValue(nameof(element.Class), out var className))
-            SetProp(element, nameof(element.Class), className);
-        
-        if (TryGetEnum(node, nameof(HorizontalAlignment), out HorizontalAlignment horizontalAlignment))
-            SetProp(element, nameof(element.HorizontalAlignment), horizontalAlignment);
-        
-        if (TryGetEnum(node, nameof(VerticalAlignment), out VerticalAlignment verticalAlignment))
-            SetProp(element, nameof(element.VerticalAlignment), verticalAlignment);
-        
-        if (node.Attributes.TryGetValue(nameof(element.Margin), out var margin))
-            SetProp(element, nameof(element.Margin), ParseThickness(margin));
-        
-        if (node.Attributes.TryGetValue(nameof(element.Padding), out var padding))
-            SetProp(element, nameof(element.Padding), ParseThickness(padding));
-        
-        { // bounds setting
-            if (node.Attributes.TryGetValue(nameof(element.Width), out var width))
+        element.GetType().GetProperties()
+            .ForEach(property =>
             {
-                element.Width = int.Parse(width);
-            }
-
-            if (node.Attributes.TryGetValue(nameof(element.Height), out var height))
-            {
-                element.Height = int.Parse(height);
-            }
-            
-        }
-        
-        if (node.Attributes.TryGetValue(nameof(element.Id), out var id))
-            SetProp(element, nameof(element.Id), id);
-
-        if (node.Attributes.TryGetValue(nameof(element.IsEnabled), out var isEnabled)
-            && new ToBoolConverter().TryConvert(isEnabled, out var result) && result != null)
-        {
-            SetProp(element, nameof(element.IsEnabled), result);
-        }
-            
-        
-        if (node.Attributes.TryGetValue(nameof(element.IsVisible), out var isVisible))
-            SetProp(element, nameof(element.IsVisible), isVisible);
+                if (property.PropertyType.IsEnum)
+                {
+                    if (TryGetEnum(property.PropertyType, node, property.Name, out var enumValue) && enumValue is not null)
+                        SetProp(element, nameof(property.Name), enumValue);
+                }
+                
+                if (node.Attributes.TryGetValue(property.Name, out var attributeValue)) 
+                {
+                    
+                    if (property.PropertyType == typeof(string))
+                    {
+                        SetProp(element, property.Name, attributeValue);
+                    }
+                    else if (ConverterService.TryConvert(property.PropertyType, attributeValue, out var convertedValue) && convertedValue is not null)
+                    {
+                        SetProp(element, property.Name, convertedValue);
+                    }
+                }
+            });
     }
     
     public static Thickness ParseThickness(string s)
@@ -123,13 +106,21 @@ public static class BuilderCommon
         p?.SetValue(target, value);
     }
 
+    public static bool TryGetEnum(Type enumType, UiNode node, string key, out object? value)
+    {
+        value = default;
+        if (!node.Attributes.TryGetValue(key, out var s)) return false;
+        if (s.Contains('.')) s = s.Split('.').Last(); // falls Processor nicht normalisiert
+        return Enum.TryParse(enumType, s, out value);
+    }
+    
     public static bool TryGetEnum<TEnum>(UiNode node, string key, out TEnum value)
         where TEnum : struct
     {
         value = default;
         if (!node.Attributes.TryGetValue(key, out var s)) return false;
         if (s.Contains('.')) s = s.Split('.').Last(); // falls Processor nicht normalisiert
-        return Enum.TryParse(s, ignoreCase: true, out value);
+        return Enum.TryParse(s, out value);
     }
     
     public static bool TryGetEnum<TEnum>(string key, out TEnum value)

@@ -21,6 +21,11 @@ public interface IUiElement
     bool IsDraggable { get; set; }
     int? Width { get; set; }
     int? Height { get; set; }
+    public int? PositionX { get; set; }
+    public int? PositionY { get; set; }
+
+    // Optional: Komfort
+    public bool HasFixedPosition => PositionX.HasValue || PositionY.HasValue;
     
     // Layout
     Rectangle Bounds { get; set; }

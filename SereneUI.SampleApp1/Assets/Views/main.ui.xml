@@ -33,6 +33,14 @@
             </Panel>
         </StackPanel>
     </Panel>
+    
+    <Panel PositionX="500" PositionY="400" Width="200" Height="200" 
+           IsDraggable="true" 
+           OnMouseDown="{Command MouseDownCommand}" 
+           OnMouseUp="{Command MouseUpCommand}"
+           OnMouseLeave="{Command MouseLeaveCommand}">
+        <TextBlock Class="arial_12">{Binding LastDragEvent}</TextBlock>
+    </Panel>
 
     <Panel Class="bottom-panel">
         <StackPanel Orientation="Horizontal">

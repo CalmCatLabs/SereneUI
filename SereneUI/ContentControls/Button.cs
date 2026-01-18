@@ -11,7 +11,7 @@ using SereneUI.Utilities;
 
 namespace SereneUI.ContentControls;
 
-public class Button : ContentControlBase
+public class Button : Panel
 {
     private Texture2D? _pixel;
     private bool _wasMousePressed;
@@ -21,10 +21,10 @@ public class Button : ContentControlBase
     public SpriteFont Font { get; set; } = null!;
     
     public Color Color { get; set; } = Color.Black;
-    public Color BackgroundColor { get; set; } = Color.White;
-    
-    public ICommand? OnClick { get; set; }
-    public event EventHandler<UiMouseEventArgs> Click;
+    //public Color BackgroundColor { get; set; } = Color.White;
+
+    public ICommand? OnClick { get; set; } = null;
+    public event EventHandler<UiMouseEventArgs> Click = null!;
     
     public Button()
     {

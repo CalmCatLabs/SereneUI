@@ -20,6 +20,7 @@ public class BuildService(IServiceProvider serviceProvider)
 
     public void Initialize(params Assembly[]? assemblies)
     {
+        _uiElementBuilders.Clear();
         if (assemblies == null || assemblies.Length < 1)
         {
             assemblies = AppDomain.CurrentDomain.GetAssemblies();
