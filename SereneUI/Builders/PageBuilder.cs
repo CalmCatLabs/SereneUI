@@ -11,9 +11,15 @@ using SereneUI.Utilities;
 
 namespace SereneUI.Builders;
 
+/// <summary>
+/// Creates a page. 
+/// </summary>
+/// <param name="services">IServiceProvider</param>
+/// <param name="buildService">The builder service.</param>
 [BuilderTargetType(typeof(Page))]
 public class PageBuilder(IServiceProvider services, BuildService buildService) : IUiElementBuilder
 {
+    /// <inheritdoc />
     public object? CreateUiElement(ContentManager content, UiNode node, Stylesheet? stylesheet, object? viewModel)
     {
         var page = new Page
@@ -49,7 +55,7 @@ public class PageBuilder(IServiceProvider services, BuildService buildService) :
         {
             if (buildService.CreateUiElement(content, child, page.Stylesheet, page.DataContext) is IUiElement uiElement)
             {
-                page.AddItem(uiElement);
+                page.AddChildren(uiElement);
             }
         });
         

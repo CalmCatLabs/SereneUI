@@ -10,9 +10,14 @@ using SereneUI.Utilities;
 
 namespace SereneUI.Builders;
 
+/// <summary>
+/// Creates a stack panel.
+/// </summary>
+/// <param name="buildService">The build service.</param>
 [BuilderTargetType(typeof(StackPanel))]
 public class StackPanelBuilder(BuildService buildService): IUiElementBuilder
 {
+    /// <inheritdoc />
     public object? CreateUiElement(ContentManager content, UiNode node, Stylesheet? stylesheet, object? viewModel)
     {
         var panel = new StackPanel
@@ -30,7 +35,7 @@ public class StackPanelBuilder(BuildService buildService): IUiElementBuilder
         {
             if (buildService.CreateUiElement(content, child, stylesheet, viewModel) is IUiElement uiElement)
             {
-                panel.AddItem(uiElement);
+                panel.AddChildren(uiElement);
             }
         });
         

@@ -10,9 +10,14 @@ using SereneUI.Utilities;
 
 namespace SereneUI.Builders;
 
+/// <summary>
+/// Class that creates a button. 
+/// </summary>
+/// <param name="buildService"></param>
 [BuilderTargetType(typeof(Button))]
 public class ButtonBuilder(BuildService buildService): IUiElementBuilder
 {
+    /// <inheritdoc />
     public object? CreateUiElement(ContentManager content, UiNode node, Stylesheet? stylesheet, object? viewModel)
     {
         var button = new Button

@@ -11,21 +11,43 @@ using SereneUI.Utilities;
 
 namespace SereneUI.ContentControls;
 
+/// <summary>
+/// Button element.
+/// </summary>
 public class Button : Panel
 {
     private Texture2D? _pixel;
     private bool _wasMousePressed;
 
+    /// <summary>
+    /// Inner button text.
+    /// </summary>
     public string? Text { get; set; } = string.Empty;
     
+    /// <summary>
+    /// Inner text font.
+    /// </summary>
     public SpriteFont Font { get; set; } = null!;
     
+    /// <summary>
+    /// Font color
+    /// </summary>
     public Color Color { get; set; } = Color.Black;
-    //public Color BackgroundColor { get; set; } = Color.White;
 
+    /// <summary>
+    /// On click command, gets fired when mouse gets up.
+    /// </summary>
     public ICommand? OnClick { get; set; } = null;
+    
+    
+    /// <summary>
+    /// On click event, gets fired when mouse gets up.
+    /// </summary>
     public event EventHandler<UiMouseEventArgs> Click = null!;
     
+    /// <summary>
+    /// Standard constructor.
+    /// </summary>
     public Button()
     {
         IsVisible = true;
@@ -40,26 +62,13 @@ public class Button : Panel
         VerticalAlignment   = VerticalAlignment.Top;
     }
 
+    
+    /// <inheritdoc />
     protected override void OnMeasure(in Point availableSize)
     {
         var innerAvailable = availableSize.Deflate(Padding);
 
         if (Content is null) return;
-        // {
-        //     var textBlock = new TextBlock
-        //     {
-        //         Text = Text,
-        //         Margin = new Thickness(0, 0, 0, 0),
-        //         Padding = new Thickness(0, 0, 0, 0),
-        //         HorizontalAlignment = HorizontalAlignment.Left,
-        //         VerticalAlignment = VerticalAlignment.Center,
-        //         Font = Font,
-        //         Color = Color,
-        //         Stylesheet = Stylesheet
-        //     };
-        //     textBlock.ApplyStyle();
-        //     Content = textBlock;
-        // }
 
         // Kind bekommt Platz: innerAvailable minus Kind-Margin
         var childAvailable = innerAvailable.Deflate(Content.Margin);
@@ -75,24 +84,10 @@ public class Button : Panel
         Size = new Point(desiredW, desiredH);
     }
 
+    /// <inheritdoc />
     protected override void OnArrange(in Rectangle finalRect)
     {
         if (Content is null) return;
-        // {
-        //     var textBlock = new TextBlock
-        //     {
-        //         Text = Text,
-        //         Margin = new Thickness(0, 0, 0, 0),
-        //         Padding = new Thickness(0, 0, 0, 0),
-        //         HorizontalAlignment = HorizontalAlignment.Left,
-        //         VerticalAlignment = VerticalAlignment.Center,
-        //         Font = Font,
-        //         Color = Color,
-        //         Stylesheet = Stylesheet
-        //     };
-        //     textBlock.ApplyStyle();
-        //     Content = textBlock;
-        // }
         
         // Innenraum des Panels
         var innerRect = finalRect.Deflate(Padding);
@@ -152,6 +147,7 @@ public class Button : Panel
         Content.Arrange(new Rectangle(x, y, Math.Max(0, cw), Math.Max(0, ch)));
     }
 
+    /// <inheritdoc />
     protected override void OnDraw(SpriteBatch spriteBatch)
     {
         if (!IsVisible) return;
@@ -167,7 +163,8 @@ public class Button : Panel
         spriteBatch.Draw(_pixel, Bounds, BackgroundColor);
         Content?.Draw(spriteBatch);
     }
-
+    
+    /// <inheritdoc />
     protected override void OnUpdate(GameTime gameTime, UiInputData inputData)
     {
         base.OnUpdate(gameTime, inputData);

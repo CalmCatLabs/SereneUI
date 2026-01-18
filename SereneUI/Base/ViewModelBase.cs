@@ -5,8 +5,12 @@ using System.Runtime.CompilerServices;
 
 namespace SereneUI.Base;
 
+/// <summary>
+/// Base class for view models. 
+/// </summary>
 public class ViewModelBase : INotifyPropertyChanged
 {
+    /// <inheritdoc />
     public event PropertyChangedEventHandler? PropertyChanged;
     
     /// <summary>

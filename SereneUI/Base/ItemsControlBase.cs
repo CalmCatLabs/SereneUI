@@ -4,26 +4,35 @@ using SereneUI.Shared.Interfaces;
 
 namespace SereneUI.Base;
 
+/// <summary>
+/// Base for controls that can have multiple children.
+/// </summary>
 public abstract class ItemsControlBase : UiElementBase, IItemsControl
 {
-    private readonly List<IUiElement> _items = [];
+    /// <summary>
+    /// Internal list of children.
+    /// </summary>
+    private readonly List<IUiElement> _children = [];
 
-    public IReadOnlyList<IUiElement> Children => _items;
+    /// <inheritdoc />
+    public IReadOnlyList<IUiElement> Children => _children;
     
-    public void AddItem(IUiElement element)
+    /// <inheritdoc />
+    public void AddChildren(IUiElement element)
     {
         if (element.Parent is not null) throw new InvalidOperationException("Element already has a parent.");
         
         element.Parent = this;
-        _items.Add(element);
+        _children.Add(element);
         
         InvalidateMeasure();
         InvalidateVisual();
     }
 
-    public bool RemoveItem(IUiElement element)
+    /// <inheritdoc />
+    public bool RemoveChildren(IUiElement element)
     {
-        if (_items.Remove(element))
+        if (_children.Remove(element))
         {
             element.Parent = null;
             InvalidateMeasure();
@@ -32,11 +41,12 @@ public abstract class ItemsControlBase : UiElementBase, IItemsControl
         }
         return false;
     }
-
-    public void ClearItems()
+    
+    /// <inheritdoc />
+    public void ClearChildren()
     {
-        _items.ForEach(i => i.Parent = null);
-        _items.Clear();
+        _children.ForEach(i => i.Parent = null);
+        _children.Clear();
         InvalidateMeasure();
         InvalidateVisual();
     }

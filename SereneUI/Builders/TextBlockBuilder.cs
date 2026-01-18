@@ -9,9 +9,13 @@ using SereneUI.Utilities;
 
 namespace SereneUI.Builders;
 
+/// <summary>
+/// 
+/// </summary>
 [BuilderTargetType(typeof(TextBlock))]
 public class TextBlockBuilder : IUiElementBuilder
 {
+    /// <inheritdoc />
     public object? CreateUiElement(ContentManager content, UiNode node, Stylesheet? stylesheet, object? viewModel)
     {
         var textBlock = new TextBlock
@@ -24,7 +28,6 @@ public class TextBlockBuilder : IUiElementBuilder
         BuilderCommon.SetCommonAttributes(textBlock, node);
         textBlock.ApplyStyle();
         
-        //textBlock.Font = content.Load<SpriteFont>("default_font");
         if (node.Attributes.TryGetValue(nameof(textBlock.Font), out var fontName))
         {
             textBlock.Font = content.Load<SpriteFont>(fontName);

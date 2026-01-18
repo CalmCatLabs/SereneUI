@@ -105,7 +105,7 @@ public class SereneUiSystem(Game game, BuildService buildService)
     {
         var uiNode = new UiNode
         {
-            Type = node.Name.LocalName ?? throw new NullReferenceException($"{nameof(node.Name.LocalName)} was null.")
+            TagName = node.Name.LocalName ?? throw new NullReferenceException($"{nameof(node.Name.LocalName)} was null.")
         };
         
         node.Attributes().ForEach(attr =>

@@ -9,9 +9,14 @@ using SereneUI.Utilities;
 
 namespace SereneUI.Builders;
 
+/// <summary>
+/// Creates a panel.
+/// </summary>
+/// <param name="buildService">The build service.</param>
 [BuilderTargetType(typeof(Panel))]
 public class PanelBuilder(BuildService buildService) : IUiElementBuilder
 {
+    /// <inheritdoc />
     public object? CreateUiElement(ContentManager content, UiNode node, Stylesheet? stylesheet, object? viewModel)
     {
         var panel = new Panel()

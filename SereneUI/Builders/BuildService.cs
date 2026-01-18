@@ -14,19 +14,22 @@ using SereneUI.Shared.Interfaces;
 
 namespace SereneUI.Builders;
 
+/// <summary>
+/// Service to build up the ui using UiNodes filled by xml.
+/// </summary>
+/// <param name="serviceProvider">IServiceProvider.</param>
 public class BuildService(IServiceProvider serviceProvider)
 {
     private readonly Dictionary<string, IUiElementBuilder> _uiElementBuilders = [];
 
-    public void Initialize(params Assembly[]? assemblies)
+    /// <summary>
+    /// Initializes the internal builder list.
+    /// </summary>
+    /// <exception cref="NullReferenceException">Throws when there is no builder target type.</exception>
+    public void Initialize()
     {
         _uiElementBuilders.Clear();
-        if (assemblies == null || assemblies.Length < 1)
-        {
-            assemblies = AppDomain.CurrentDomain.GetAssemblies();
-        }
-        
-        assemblies.SelectMany(a => a.GetTypes())
+        AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes())
             .Where(t => typeof(IUiElementBuilder).IsAssignableFrom(t) && t is { IsAbstract: false, IsInterface: false })
             .ForEach(builderType =>
             {
@@ -38,9 +41,17 @@ public class BuildService(IServiceProvider serviceProvider)
             });
     }
 
+    /// <summary>
+    /// Create the elements from the ui nodes. 
+    /// </summary>
+    /// <param name="content">Monogames content manager.</param>
+    /// <param name="node">Current ui node.</param>
+    /// <param name="stylesheet">Stylesheet for the ui.</param>
+    /// <param name="viewModel">optional view model.</param>
+    /// <returns></returns>
     public object? CreateUiElement(ContentManager content, UiNode node, Stylesheet? stylesheet, object? viewModel)
     {
-        var builder = _uiElementBuilders[node.Type];
+        var builder = _uiElementBuilders[node.TagName];
         return builder.CreateUiElement(content, node, stylesheet, viewModel);
     }
 }
