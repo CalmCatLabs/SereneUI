@@ -19,52 +19,52 @@ namespace SereneUI.Base;
 /// <summary>
 /// Base implementation for every ui element.
 /// </summary>
-public abstract class UiElementBase : IUiElement
+public abstract class UiElementBase : ObservableObject, IUiElement
 {
     /// <inheritdoc />
-    public string? Id { get; set; }
+    public string? Id { get; set => SetProperty(ref field, value); }
 
     /// <inheritdoc />
-    public Dictionary<string, string> MarkupExpressions { get; set; } = [];
+    public Dictionary<string, string> MarkupExpressions { get; init; } = [];
     
     /// <inheritdoc />
-    public object? DataContext { get; set; }
+    public object? DataContext { get; set => SetProperty(ref field, value); }
     
     /// <inheritdoc />
-    public string? Class { get; set; }
+    public string? Class { get; set => SetProperty(ref field, value); }
     
     /// <inheritdoc />
-    public int? Width { get; set; }
+    public int? Width { get; set => SetProperty(ref field, value); }
     
     /// <inheritdoc />
-    public int? Height { get; set; }
+    public int? Height { get; set => SetProperty(ref field, value); }
     
     /// <inheritdoc />
-    public int? PositionX { get; set; }
+    public int? PositionX { get; set => SetProperty(ref field, value); }
     
     /// <inheritdoc />
-    public int? PositionY { get; set; }
+    public int? PositionY { get; set => SetProperty(ref field, value); }
     
     /// <inheritdoc />
     public bool HasFixedPosition => PositionX.HasValue || PositionY.HasValue;
     
     /// <inheritdoc />
-    public Rectangle Bounds { get; set; }
+    public Rectangle Bounds { get; set => SetProperty(ref field, value); }
     
     /// <inheritdoc />
-    public Point Size { get; protected set; }
+    public Point Size { get; protected set => SetProperty(ref field, value); }
     
     /// <inheritdoc />
-    public Thickness Padding { get; set; }
+    public Thickness Padding { get; set => SetProperty(ref field, value); }
     
     /// <inheritdoc />
-    public Thickness Margin { get; set; }
+    public Thickness Margin { get; set => SetProperty(ref field, value); }
     
     /// <inheritdoc />
-    public HorizontalAlignment HorizontalAlignment { get; set; }
+    public HorizontalAlignment HorizontalAlignment { get; set => SetProperty(ref field, value); }
     
     /// <inheritdoc />
-    public VerticalAlignment VerticalAlignment { get; set; }
+    public VerticalAlignment VerticalAlignment { get; set => SetProperty(ref field, value); }
     
     /// <inheritdoc />
     public bool IsEnabled
@@ -72,65 +72,102 @@ public abstract class UiElementBase : IUiElement
         get => field;
         set
         {
-            field = value;
+            SetProperty(ref field, value);
             if (field) ApplyStyle();
             else ApplyStyle(":disabled");
         }
     }
     
     /// <inheritdoc />
-    public bool IsVisible { get; set; }
+    public bool IsVisible { get; set => SetProperty(ref field, value); }
     
     /// <inheritdoc />
-    public bool IsDraggable { get; set; } = false;
-    
+    public bool IsDraggable { get; set => SetProperty(ref field, value, CheckIsDraggableChange); } = false;
+
+
     /// <inheritdoc />
-    public IUiElement? Parent { get; set; }
+    public IUiElement? Parent { get; set => SetProperty(ref field, value); }
     
     /// <summary>
     /// Indicates if the measurement is dirty.
     /// </summary>
-    protected bool IsMeasureDirty { get; private set; } = true;
+    protected bool IsMeasureDirty { get; private set => SetProperty(ref field, value); } = true;
     
     /// <summary>
     /// Indicates if the arrangement is dirty.
     /// </summary>
-    protected bool IsArrangeDirty { get; private set; } = true;
+    protected bool IsArrangeDirty { get; private set => SetProperty(ref field, value); } = true;
     
     /// <summary>
     /// Indicates if the visual is dirty.
     /// </summary>
-    protected bool IsVisualDirty { get; private set; } = true;
+    protected bool IsVisualDirty { get; private set => SetProperty(ref field, value); } = true;
+
+    /// <summary>
+    /// Indicates if an element can be focused. 
+    /// </summary>
+    public bool IsFocusable { get; set => SetProperty(ref field, value); } = false;
+
+    /// <summary>
+    /// Indicates if the current element has focus. 
+    /// </summary>
+    public bool HasFocus { get; set => SetProperty(ref field, value, CheckFocusChange); } = false;
+
+    private void CheckFocusChange()
+    {
+        if (!HasFocus)
+        {
+            RaiseFocusLeave();
+        }
+    }
+    
+    private void CheckIsDraggableChange()
+    {
+        if (IsDraggable)
+        {
+            IsFocusable = true;
+        }
+    }
 
     /// <summary>
     /// ExCSS Stylesheet
     /// </summary>
-    public Stylesheet? Stylesheet { get; set; } = null;
+    public Stylesheet? Stylesheet { get; set => SetProperty(ref field, value); } = null;
     
     /// <summary>
     /// Command to call when the mouse enters the element.
     /// </summary>
-    public ICommand? OnMouseEnter { get; set; }
+    public ICommand? OnMouseEnter { get; set => SetProperty(ref field, value); }
     
     /// <summary>
     /// Command to call when the mouse leaves the element.
     /// </summary>
-    public ICommand? OnMouseLeave { get; set; }
+    public ICommand? OnMouseLeave { get; set => SetProperty(ref field, value); }
     
     /// <summary>
     /// Command to call when the mouose is over the element.
     /// </summary>
-    public ICommand? OnMouseOver { get; set; }
+    public ICommand? OnMouseOver { get; set => SetProperty(ref field, value); }
     
     /// <summary>
     /// Command to call when mouse gets down on element.
     /// </summary>
-    public ICommand? OnMouseDown { get; set; }
+    public ICommand? OnMouseDown { get; set => SetProperty(ref field, value); }
     
     /// <summary>
     /// Command to call when mouse gets up on element
     /// </summary>
-    public ICommand? OnMouseUp { get; set; }
+    public ICommand? OnMouseUp { get; set => SetProperty(ref field, value); }
+    
+    /// <summary>
+    /// Command to call when the element gets focused.
+    /// </summary>
+    public ICommand? OnFocusEnter { get; set => SetProperty(ref field, value); }
+    
+    /// <summary>
+    /// Command to call when the element lost focus. 
+    /// </summary>
+    public ICommand? OnFocusLeave { get; set => SetProperty(ref field, value); }
     
     /// <summary>
     /// Event to fire when mouse enters the element. 
@@ -156,6 +193,8 @@ public abstract class UiElementBase : IUiElement
     /// Event to fire when mouse button goes up.
     /// </summary>
     public event EventHandler<UiMouseEventArgs> MouseUp;
+    public event EventHandler FocusEnter;
+    public event EventHandler FocusLeave;
 
     /// <summary>
     /// indicates if mouse is over the element.
@@ -180,6 +219,8 @@ public abstract class UiElementBase : IUiElement
     private int _height;
     private int _width;
 
+    private readonly List<string> appliedPseudoClasses = [];
+
     /// <inheritdoc />
     public void ApplyStyle(string pseudoClass = "")
     {
@@ -199,6 +240,18 @@ public abstract class UiElementBase : IUiElement
                 property.SetValue(this, converted);
             }
         });
+    }
+
+    public void AddPseudoClass(string pseudoClass)
+    {
+        if (appliedPseudoClasses.Contains(pseudoClass)) return;
+        appliedPseudoClasses.Add(pseudoClass);
+    }
+    
+    public void RemovePseudoClass(string pseudoClass)
+    {
+        if (appliedPseudoClasses.Contains(pseudoClass))
+            appliedPseudoClasses.Remove(pseudoClass);
     }
 
     /// <summary>
@@ -300,7 +353,6 @@ public abstract class UiElementBase : IUiElement
             ApplyStyle(":drag");
             InvalidateMeasure();
             InvalidateVisual();
-            InvalidateArrange();
         }
 
         if (_isDragging && input.LeftMousePressed)
@@ -314,7 +366,6 @@ public abstract class UiElementBase : IUiElement
             PositionY = Math.Max(0 - (int)Bounds.Height / 2, newAbs.Y);
             PositionX = Math.Min(_width - (int)Bounds.Width / 2, PositionX.Value); 
             PositionY = Math.Min(_height - (int)Bounds.Height / 2, PositionY.Value); 
-            Debug.WriteLine($"Dragging {PositionX}x{PositionY} | {_width}x{_height}");
             InvalidateArrange();
         }
 
@@ -324,7 +375,6 @@ public abstract class UiElementBase : IUiElement
             ApplyStyle();
             InvalidateMeasure();
             InvalidateVisual();
-            InvalidateArrange();
         }
     }
     
@@ -403,7 +453,7 @@ public abstract class UiElementBase : IUiElement
     /// </summary>
     /// <param name="pos">Mouse position</param>
     /// <param name="input">Input states.</param>
-    protected static void TryExecute(ICommand? cmd, UiMouseEventArgs args, object? sender = null)
+    protected static void TryExecute<TArgs>(ICommand? cmd, TArgs args, object? sender = null)
     {
         if (cmd is null) return;
         if (cmd.CanExecute(sender: sender, args: args))
@@ -572,7 +622,35 @@ public abstract class UiElementBase : IUiElement
             _isMouseDown = false;
             RaiseMouseUp(mousePosition, inputData);
         }
+        HandleFocus(inputData, mousePosition, hit);
         HandleDrag(inputData, mousePosition, hit);
+    }
+
+    private void HandleFocus(UiInputData inputData, Point mousePosition, bool hit)
+    {
+        if (!IsVisible) return;
+        if (!IsEnabled) return;
+        if (!IsFocusable) return;
+        
+        if (!HasFocus && hit && inputData.LeftMouseDown)
+        {
+            HasFocus = true;
+            RaiseFocusEnter(mousePosition, inputData);
+        }
+    }
+
+    private void RaiseFocusEnter(Point mousePosition, UiInputData inputData)
+    {
+        var args = new UiMouseEventArgs(mousePosition, inputData);
+        FocusEnter?.Invoke(this, args);
+        TryExecute(OnFocusEnter, args, this);
+    }
+
+
+    private void RaiseFocusLeave()
+    {
+        FocusLeave?.Invoke(this, EventArgs.Empty);
+        TryExecute<object?>(OnFocusLeave, null, this);
     }
 
     /// <summary>
@@ -592,5 +670,4 @@ public abstract class UiElementBase : IUiElement
     /// </summary>
     /// <param name="spriteBatch">Monogames SpriteBatch.</param>
     protected abstract void OnDraw(SpriteBatch spriteBatch);
-    
 }

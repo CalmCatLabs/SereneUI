@@ -15,6 +15,12 @@ Panel:drag {
     BackgroundColor: #E8DBD888;
 }
 
+Panel:focus {
+    /* Padding="5,5,5,5" HorizontalAlignment="Stretch" VerticalAlignment="Top" BackgroundColor="#E6C0E9" */
+    Padding: 5, 5, 5, 5;
+    BackgroundColor: #f9a8b499;
+}
+
 Panel.top-panel {
     /* Padding="5,5,5,5" HorizontalAlignment="Stretch" VerticalAlignment="Top" BackgroundColor="#E6C0E9" */
     Padding: 10, 10, 10, 10;
@@ -70,6 +76,29 @@ Button:disabled {
     Font: Fonts/arial_12;
 }
 
+Button:focus {
+    Padding: 15,15,15,15;
+    BackgroundColor: #f9a8b4;
+    Color: #351D2E;
+    Font: Fonts/arial_12;
+}
+
 Button.exit {
-    BackgroundColor: #B87A91;
+    BackgroundColor: #B87A9199;
+}
+
+#drag {
+    BackgroundColor: #97DFFC99;
+}
+
+#drag1 {
+    BackgroundColor: #858AE399;
+}
+
+#drag2 {
+    BackgroundColor: #613DC199;
+}
+
+#drag3 {
+    BackgroundColor: #4E148C99;
 }

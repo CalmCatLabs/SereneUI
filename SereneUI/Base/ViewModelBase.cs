@@ -8,7 +8,7 @@ namespace SereneUI.Base;
 /// <summary>
 /// Base class for view models. 
 /// </summary>
-public class ViewModelBase : INotifyPropertyChanged
+public class ObservableObject : INotifyPropertyChanged
 {
     /// <inheritdoc />
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -36,4 +36,8 @@ public class ViewModelBase : INotifyPropertyChanged
         OnPropertyChanged(propertyName);
         return true;
     }
+}
+
+public class ViewModelBase : ObservableObject
+{
 }

@@ -60,9 +60,17 @@ public class Button : Panel
         // nicht zur Positionierung des Content.
         HorizontalAlignment = HorizontalAlignment.Left;
         VerticalAlignment   = VerticalAlignment.Top;
+        IsFocusable = true;
+        
+        FocusEnter += OnFocusEnterHandler;
     }
 
-    
+    private void OnFocusEnterHandler(object? sender, EventArgs e)
+    {
+        ApplyStyle(":focus");
+    }
+
+
     /// <inheritdoc />
     protected override void OnMeasure(in Point availableSize)
     {

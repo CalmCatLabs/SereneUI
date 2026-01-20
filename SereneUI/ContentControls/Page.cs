@@ -19,6 +19,9 @@ public class Page : ItemsControlBase
 {
     private readonly Dictionary<IUiElement, int> _zIndex = [];
     private readonly Dictionary<IUiElement, Rectangle> _layoutBounds = []; // LOCAL bounds inside Page
+    private readonly List<IUiElement> _focuableElements = [];
+    private IUiElement? _currentFocusElement;
+
     public Page()
     {
         IsVisible = true;
@@ -134,9 +137,11 @@ public class Page : ItemsControlBase
         var childHit = HitTestTopMostChild(inputData.MousePosition);
         if (childHit is not null)
         {
-            Debug.WriteLine($"{childHit.Id}, {childHit.GetType().Name}, {inputData.MousePosition}");
+            if (inputData.LeftMousePressed)
+            {
+                BringToFront(childHit);
+            }
             childHit.HandleInput(inputData);
-            
         }
     }
 
@@ -154,4 +159,41 @@ public class Page : ItemsControlBase
             .ThenByDescending(t => t.i)
             .Select(t => t.c)
             .FirstOrDefault(c => c.HitTest(screenPoint));
+
+    public void AddFocusableElement(IUiElement currentElement)
+    {
+        if (_focuableElements.Contains(currentElement)) return;
+        _focuableElements.Add(currentElement);
+        if (currentElement is UiElementBase ce)
+        {
+            ce.FocusEnter += OnFocusEnterHandler;
+            ce.FocusLeave += OnFocusLeaveHandler;
+        }
+    }
+
+    private void OnFocusLeaveHandler(object? sender, EventArgs e)
+    {
+        if (sender is UiElementBase focusableElement)
+        {
+            Debug.WriteLine($"{focusableElement.Id} lost focus.");
+            focusableElement.HasFocus = false;
+            if (focusableElement.Equals(_currentFocusElement))
+                _currentFocusElement = null;
+        }
+    }
+
+    private void OnFocusEnterHandler(object? sender, EventArgs e)
+    {
+        if (sender is UiElementBase focusableElement)
+        {
+            Debug.WriteLine($"{focusableElement.Id} got focus.");
+            focusableElement.HasFocus = true;
+            _focuableElements.ForEach(fe =>
+            {
+                if (fe == focusableElement) return;
+                fe.HasFocus = false;
+            });
+            _currentFocusElement = focusableElement;
+        }
+    }
 }

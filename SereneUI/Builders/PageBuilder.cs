@@ -3,6 +3,8 @@ using System.IO;
 using System.Linq;
 using ExCSS;
 using Microsoft.Xna.Framework.Content;
+using Serene.Common.Extensions;
+using SereneUI.Base;
 using SereneUI.ContentControls;
 using SereneUI.Shared.Attributes;
 using SereneUI.Shared.DataStructures;
@@ -62,6 +64,30 @@ public class PageBuilder(IServiceProvider services, BuildService buildService) :
         // WireUp
         BindingEngine.WireUp(page);
         
+        // WireUp Events
+        WireUpFocusableElements(page, page);
+        
         return page;
+    }
+
+    private void WireUpFocusableElements(Page page, IUiElement currentElement)
+    {
+        if (currentElement.IsFocusable)
+        {
+            page.AddFocusableElement(currentElement);
+        }
+
+        if (currentElement is ContentControlBase ccb && ccb.Content is not null)
+        {
+            WireUpFocusableElements(page, ccb.Content);
+        }
+        
+        if (currentElement is ItemsControlBase icb)
+        {
+            icb.Children.ForEach(child =>
+            {
+                WireUpFocusableElements(page, child);
+            });
+        }
     }
 }

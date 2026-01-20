@@ -113,6 +113,10 @@ public interface IUiElement
     /// Parent IUiElement if any (page does not have one.)
     /// </summary>
     IUiElement? Parent { get; set; }
+    
+    bool IsFocusable { get; set; }
+    
+    bool HasFocus { get; set; }
 
     /// <summary>
     /// Method to apply a style.

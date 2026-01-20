@@ -35,7 +35,7 @@
     </Panel>
     
     <Panel Id="drag"
-           PositionX="500" PositionY="400" Width="200" Height="200" 
+           PositionX="400" PositionY="200" Width="170" Height="100"
            IsDraggable="true" 
            OnMouseDown="{Command MouseDownCommand}" 
            OnMouseUp="{Command MouseUpCommand}"
@@ -43,6 +43,40 @@
         <StackPanel>
             <TextBlock Class="arial_12">I am draggable.</TextBlock>
             <TextBlock Class="arial_12">{Binding LastDragEvent}</TextBlock>            
+        </StackPanel>
+    </Panel>
+    <Panel Id="drag1"
+           PositionX="420" PositionY="230" Width="170" Height="100"
+           IsDraggable="true"
+           OnMouseDown="{Command MouseDownCommand}"
+           OnMouseUp="{Command MouseUpCommand}"
+           OnMouseLeave="{Command MouseLeaveCommand}">
+        <StackPanel>
+            <TextBlock Class="arial_12">I am draggable.</TextBlock>
+            <TextBlock Class="arial_12">{Binding LastDragEvent}</TextBlock>
+        </StackPanel>
+    </Panel>
+    <Panel Id="drag2"
+           PositionX="440" PositionY="260" Width="170" Height="100"
+           IsDraggable="true"
+           OnMouseDown="{Command MouseDownCommand}"
+           OnMouseUp="{Command MouseUpCommand}"
+           OnMouseLeave="{Command MouseLeaveCommand}">
+        <StackPanel>
+            <TextBlock Class="arial_12">I am draggable.</TextBlock>
+            <TextBlock Class="arial_12">{Binding LastDragEvent}</TextBlock>
+        </StackPanel>
+    </Panel>
+    <Panel Id="drag3"
+           PositionX="460" PositionY="290" Width="170" Height="100"
+           IsDraggable="true"
+           OnMouseDown="{Command MouseDownCommand}"
+           OnMouseUp="{Command MouseUpCommand}"
+           OnMouseLeave="{Command MouseLeaveCommand}"
+           IsFocusable="true">
+        <StackPanel>
+            <TextBlock Class="arial_12">I am draggable.</TextBlock>
+            <TextBlock Class="arial_12">{Binding LastDragEvent}</TextBlock>
         </StackPanel>
     </Panel>
 
