@@ -36,21 +36,6 @@ public class ButtonBuilder(BuildService buildService): IUiElementBuilder
             uiElement.Parent = button;
             button.Content = uiElement;
         }
-        
-        if (node.Attributes.TryGetValue(nameof(button.BackgroundColor), out var backgroundColor))
-        {
-            button.BackgroundColor = BuilderCommon.ParseColor(backgroundColor);
-        }
-        
-        if (node.Attributes.TryGetValue(nameof(button.Font), out var fontName))
-        {
-            button.Font = content.Load<SpriteFont>(fontName);
-        }
-        
-        if (node.Attributes.TryGetValue(nameof(button.Color), out var color))
-        {
-            button.Color = BuilderCommon.ParseColor(color);
-        }
         return button;
     }
 }

@@ -14,6 +14,7 @@ public static class ServiceCollectionExtension
         serviceCollection.AddSingleton<PanelBuilder>();
         serviceCollection.AddSingleton<StackPanelBuilder>();
         serviceCollection.AddSingleton<TextBlockBuilder>();
+        serviceCollection.AddSingleton<LineEditBuilder>();
         
         return serviceCollection;
     }

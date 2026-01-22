@@ -11,7 +11,7 @@ public class TextBlock : UiElementBase
 {
     private Vector2 _drawPosition = Vector2.Zero;
     public string? Text { get; set; } = string.Empty;
-    public SpriteFont Font { get; set; } = null!;
+    public SpriteFont? Font { get; set; } = null!;
     public Color Color { get; set; } = Color.Black;
 
     public TextBlock(SpriteFont font)
@@ -41,7 +41,9 @@ public class TextBlock : UiElementBase
     
     protected override void OnMeasure(in Point availableSize)
     {
-        var measuredSize = Font.MeasureString(Text ?? string.Empty);
+        var measuredSize = Vector2.Zero;
+        if (Font is not null)
+            measuredSize = Font.MeasureString(Text ?? string.Empty);
         
         int textWidth = (int)MathF.Ceiling(measuredSize.X);
         int textHeight = (int)MathF.Ceiling(measuredSize.Y);
@@ -62,7 +64,9 @@ public class TextBlock : UiElementBase
         var innerWidth = Math.Max(0, finalRect.Width - (Padding.Left + Margin.Left + Padding.Right + Margin.Right));
         var innerHeight = Math.Max(0, finalRect.Height - (Padding.Top + Margin.Top + Padding.Bottom + Margin.Bottom));
         
-        var measuredText = Font.MeasureString(Text ?? string.Empty);
+        var measuredText = Vector2.Zero;
+        if (Font is not null)
+            measuredText = Font.MeasureString(Text ?? string.Empty);
         float textWidth = measuredText.X;
         float textHeight = measuredText.Y;
         

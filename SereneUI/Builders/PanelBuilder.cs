@@ -27,18 +27,14 @@ public class PanelBuilder(BuildService buildService) : IUiElementBuilder
         };
         BuilderCommon.SetCommonAttributes(panel, node);
         panel.ApplyStyle();
-        
-        if (node.Children.FirstOrDefault() is { } child 
+
+        if (node.Children.FirstOrDefault() is { } child
             && buildService.CreateUiElement(content, child, stylesheet, viewModel) is IUiElement uiElement)
         {
             uiElement.Parent = panel;
             panel.Content = uiElement;
         }
-        
-        if (node.Attributes.TryGetValue(nameof(panel.BackgroundColor), out var backgroundColor))
-        {
-            panel.BackgroundColor = BuilderCommon.ParseColor(backgroundColor);
-        }
+
         return panel;
     }
 }

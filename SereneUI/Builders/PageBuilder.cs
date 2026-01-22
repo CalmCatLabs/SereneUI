@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Content;
 using Serene.Common.Extensions;
 using SereneUI.Base;
 using SereneUI.ContentControls;
+using SereneUI.Extensions;
 using SereneUI.Shared.Attributes;
 using SereneUI.Shared.DataStructures;
 using SereneUI.Shared.Interfaces;
@@ -30,7 +31,6 @@ public class PageBuilder(IServiceProvider services, BuildService buildService) :
             MarkupExpressions = node.MarkupExpressions
         };
         BuilderCommon.SetCommonAttributes(page, node);
-        page.ApplyStyle();
 
         if (node.Attributes.TryGetValue("Stylesheet", out string? stylesheetName) && !string.IsNullOrEmpty(stylesheetName))
         {
@@ -43,7 +43,7 @@ public class PageBuilder(IServiceProvider services, BuildService buildService) :
 
             using var filestream = File.Open(stylesheetName, FileMode.Open);
             page.Stylesheet = cssParser.Parse(filestream);
-            page.ApplyStyle();
+            page.Stylesheet.CompileRules();
         }
 
         if (viewModel is null && node.Attributes.TryGetValue("DataContextType", out string? dataContextTypeName))
@@ -66,7 +66,17 @@ public class PageBuilder(IServiceProvider services, BuildService buildService) :
         
         // WireUp Events
         WireUpFocusableElements(page, page);
-        
+        page.CompileObjectSelectors();
+        NodeUtility.ForAllNodesRun(page, uiElement =>
+        {
+            uiElement.ApplyStyle();
+            if (uiElement is UiElementBase ue)
+            {
+                ue.Drag += page.OnDragHandler;
+                ue.DragEnter += page.OnDragEnterHandler;
+                ue.DragLeave += page.OnDragLeaveHandler;
+            }
+        });
         return page;
     }
 

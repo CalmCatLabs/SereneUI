@@ -11,13 +11,11 @@ Panel {
 
 Panel:drag {
     /* Padding="5,5,5,5" HorizontalAlignment="Stretch" VerticalAlignment="Top" BackgroundColor="#E6C0E9" */
-    Padding: 5, 5, 5, 5;
     BackgroundColor: #E8DBD888;
 }
 
 Panel:focus {
     /* Padding="5,5,5,5" HorizontalAlignment="Stretch" VerticalAlignment="Top" BackgroundColor="#E6C0E9" */
-    Padding: 5, 5, 5, 5;
     BackgroundColor: #f9a8b499;
 }
 
@@ -48,16 +46,30 @@ TextBlock.arial_12 {
     Font: Fonts/arial_12;
 }
 
+TextBlock.line-edit {
+    Font: Fonts/arial_12;
+    HorizontalAlignment: Left;
+    VerticalAlignment: Center;
+    Color: #351D2E;
+}
+
 Button {
     Padding: 15,15,15,15;
     BackgroundColor: #D9B8C4;
+    BorderThickness: 1,1,3,3;
+    BorderColor: #380A11;
     Color: #351D2E;
     Font: Fonts/arial_12;
+}
+
+Button .small {
+    Padding: 10,5,10,5;
 }
 
 Button:hover {
     Padding: 15,15,15,15;
     BackgroundColor: #E9C8D4;
+    BorderThickness: 1,1,1,1;
     Color: #351D2E;
     Font: Fonts/arial_12;
 }
@@ -65,6 +77,7 @@ Button:hover {
 Button:active {
     Padding: 15,15,15,15;
     BackgroundColor: #f9e8f4;
+    BorderThickness: 1,1,1,1;
     Color: #351D2E;
     Font: Fonts/arial_12;
 }
@@ -72,19 +85,32 @@ Button:active {
 Button:disabled {
     Padding: 15,15,15,15;
     BackgroundColor: #a998a4;
+    BorderThickness: 1,1,1,1;
     Color: #351D2E;
     Font: Fonts/arial_12;
 }
 
 Button:focus {
-    Padding: 15,15,15,15;
     BackgroundColor: #f9a8b4;
-    Color: #351D2E;
-    Font: Fonts/arial_12;
 }
 
 Button.exit {
     BackgroundColor: #B87A9199;
+}
+
+LineEdit {
+    Margin: 0,5,0,5;
+    Padding: 5,5,5,5;
+    BackgroundColor: #a998a4;
+    BorderThickness: 0,0,0,3;
+    BorderColor: #380A11;
+    Color: #351D2E;
+    HorizontalAlignment: Stretch;
+}
+
+LineEdit:focus {
+    BackgroundColor: #a998a4dd;
+    Color: #351D2E;
 }
 
 #drag {
@@ -101,4 +127,6 @@ Button.exit {
 
 #drag3 {
     BackgroundColor: #4E148C99;
+    BorderThickness: 10, 5, 10, 5;
+    BorderColor: #6b128bff;
 }

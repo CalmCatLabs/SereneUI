@@ -14,3 +14,13 @@ public class ToColorConverter : IConverter
         return true;
     }
 }
+
+[ConversionTargetType(typeof(Color?))]
+public class ToNullableColorConverter : IConverter
+{
+    public bool TryConvert(string value, out object? result)
+    {
+        result = BuilderCommon.ParseColor(value);
+        return true;
+    }
+}

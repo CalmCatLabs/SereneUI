@@ -7,9 +7,11 @@ using ExCSS;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SereneUI.Converters;
+using SereneUI.Extensions;
 using SereneUI.Shared.DataStructures;
 using SereneUI.Shared.EventArgs;
 using SereneUI.Shared.Interfaces;
+using Color = Microsoft.Xna.Framework.Color;
 using HorizontalAlignment = SereneUI.Shared.Enums.HorizontalAlignment;
 using Point = Microsoft.Xna.Framework.Point;
 using VerticalAlignment = SereneUI.Shared.Enums.VerticalAlignment;
@@ -32,7 +34,9 @@ public abstract class UiElementBase : ObservableObject, IUiElement
     
     /// <inheritdoc />
     public string? Class { get; set => SetProperty(ref field, value); }
-    
+
+    public string? PseudoClass => string.Join(' ', appliedPseudoClasses);
+
     /// <inheritdoc />
     public int? Width { get; set => SetProperty(ref field, value); }
     
@@ -61,6 +65,12 @@ public abstract class UiElementBase : ObservableObject, IUiElement
     public Thickness Margin { get; set => SetProperty(ref field, value); }
     
     /// <inheritdoc />
+    public Thickness? BorderThickness { get; set; } = Thickness.Zero;
+    
+    /// <inheritdoc />
+    public Color? BorderColor { get; set; } = Color.Black;
+    
+    /// <inheritdoc />
     public HorizontalAlignment HorizontalAlignment { get; set => SetProperty(ref field, value); }
     
     /// <inheritdoc />
@@ -73,8 +83,9 @@ public abstract class UiElementBase : ObservableObject, IUiElement
         set
         {
             SetProperty(ref field, value);
-            if (field) ApplyStyle();
-            else ApplyStyle(":disabled");
+            if (!field) AddPseudoClass("disabled"); 
+            else RemovePseudoClass("disabled");
+            ApplyStyle();
         }
     }
     
@@ -82,7 +93,7 @@ public abstract class UiElementBase : ObservableObject, IUiElement
     public bool IsVisible { get; set => SetProperty(ref field, value); }
     
     /// <inheritdoc />
-    public bool IsDraggable { get; set => SetProperty(ref field, value, CheckIsDraggableChange); } = false;
+    public bool IsDraggable { get; set => SetProperty(ref field, value); } = false;
 
 
     /// <inheritdoc />
@@ -117,16 +128,21 @@ public abstract class UiElementBase : ObservableObject, IUiElement
     {
         if (!HasFocus)
         {
+            RemovePseudoClass("focus");
             RaiseFocusLeave();
         }
-    }
-    
-    private void CheckIsDraggableChange()
-    {
-        if (IsDraggable)
+        else if (HasFocus && _isMouseOver && appliedPseudoClasses.Contains("focus"))
         {
-            IsFocusable = true;
+            RemovePseudoClass("focus");
         }
+        else if (HasFocus && !_isMouseOver && !appliedPseudoClasses.Contains("focus"))
+        {
+            AddPseudoClass("focus");
+        }
+        
+        InvalidateMeasure();
+        InvalidateVisual();
+        ApplyStyle();
     }
 
     /// <summary>
@@ -158,6 +174,20 @@ public abstract class UiElementBase : ObservableObject, IUiElement
     /// Command to call when mouse gets up on element
     /// </summary>
     public ICommand? OnMouseUp { get; set => SetProperty(ref field, value); }
+    /// <summary>
+    /// Command to call when dragging starts.
+    /// </summary>
+    public ICommand? OnDragEnter { get; set => SetProperty(ref field, value); }
+    
+    /// <summary>
+    /// Command to call when the dragging ends.
+    /// </summary>
+    public ICommand? OnDragLeave { get; set => SetProperty(ref field, value); }
+    
+    /// <summary>
+    /// Command to call while dragging
+    /// </summary>
+    public ICommand? OnDrag { get; set => SetProperty(ref field, value); }
     
     /// <summary>
     /// Command to call when the element gets focused.
@@ -193,6 +223,22 @@ public abstract class UiElementBase : ObservableObject, IUiElement
     /// Event to fire when mouse button goes up.
     /// </summary>
     public event EventHandler<UiMouseEventArgs> MouseUp;
+    
+    /// <summary>
+    /// Event to fire when drag starts
+    /// </summary>
+    public event EventHandler<UiMouseEventArgs> DragEnter;
+    
+    /// <summary>
+    /// Event to fire when drag leaves
+    /// </summary>
+    public event EventHandler<UiMouseEventArgs> DragLeave;
+    
+    /// <summary>
+    /// Event to fire when dragging
+    /// </summary>
+    public event EventHandler<UiMouseEventArgs> Drag;
+    
     public event EventHandler FocusEnter;
     public event EventHandler FocusLeave;
 
@@ -225,16 +271,17 @@ public abstract class UiElementBase : ObservableObject, IUiElement
     public void ApplyStyle(string pseudoClass = "")
     {
         if (Stylesheet is null) return;
-        var possibleSelectors = GetValidSelectors(pseudoClass);
-        possibleSelectors.ForEach(selector =>
+        this.CompileObjectSelectors();
+        var rules = this.MatchingRules(Stylesheet);
+        
+        rules.ToList().ForEach(rule =>
         {
-            var styleRule = Stylesheet.StyleRules.FirstOrDefault(sr => sr.SelectorText.Trim().Equals(selector.Trim()));
-            if (styleRule is null) return;
-
+            if (rule is null) return;
+            
             var properties = GetType().GetProperties();
             foreach (var property in properties)
             {
-                var value = styleRule.Style.GetPropertyValue(property.Name);
+                var value = rule.Style.GetPropertyValue(property.Name);
                 if (string.IsNullOrWhiteSpace(value)) continue;
                 var converted = ConverterService.Convert(property.PropertyType, value);
                 property.SetValue(this, converted);
@@ -350,24 +397,13 @@ public abstract class UiElementBase : ObservableObject, IUiElement
 
             // Offset: wo greifst du das Element an?
             _dragOffsetInElement = mousePosition - elementAbs;
-            ApplyStyle(":drag");
+            AddPseudoClass("drag");
+            ApplyStyle();
             InvalidateMeasure();
             InvalidateVisual();
+            RaiseDragEnter(mousePosition, input);
         }
-
-        if (_isDragging && input.LeftMousePressed)
-        {
-            // Ziel: Element so bewegen, dass der anfängliche Griffpunkt unter der Maus bleibt
-            var newAbs = mousePosition - _dragOffsetInElement;
-
-            // Wenn PositionX/Y relativ zum Parent:
-            // newRel = newAbs - parentAbs
-            PositionX = Math.Max(0 - (int)Bounds.Width / 2, newAbs.X); 
-            PositionY = Math.Max(0 - (int)Bounds.Height / 2, newAbs.Y);
-            PositionX = Math.Min(_width - (int)Bounds.Width / 2, PositionX.Value); 
-            PositionY = Math.Min(_height - (int)Bounds.Height / 2, PositionY.Value); 
-            InvalidateArrange();
-        }
+        
 
         if (_isDragging && input.LeftMouseReleased)
         {
@@ -375,6 +411,23 @@ public abstract class UiElementBase : ObservableObject, IUiElement
             ApplyStyle();
             InvalidateMeasure();
             InvalidateVisual();
+            RaiseDragLeave(mousePosition, input);
+        }
+    }
+
+    public void HandleDragMove(UiInputData input, Point mousePosition)
+    {
+        if (_isDragging && input.LeftMousePressed)
+        {
+            RaiseDrag(mousePosition, input);
+            // Ziel: Element so bewegen, dass der anfängliche Griffpunkt unter der Maus bleibt
+            var newAbs = mousePosition - _dragOffsetInElement;
+
+            PositionX = Math.Max(0 - (int)Bounds.Width / 2, newAbs.X); 
+            PositionY = Math.Max(0 - (int)Bounds.Height / 2, newAbs.Y);
+            PositionX = Math.Min(_width - (int)Bounds.Width / 2, PositionX.Value); 
+            PositionY = Math.Min(_height - (int)Bounds.Height / 2, PositionY.Value); 
+            InvalidateArrange();
         }
     }
     
@@ -646,11 +699,31 @@ public abstract class UiElementBase : ObservableObject, IUiElement
         TryExecute(OnFocusEnter, args, this);
     }
 
-
     private void RaiseFocusLeave()
     {
         FocusLeave?.Invoke(this, EventArgs.Empty);
         TryExecute<object?>(OnFocusLeave, null, this);
+    }
+    
+    private void RaiseDragEnter(Point mousePosition, UiInputData inputData)
+    {
+        var args = new UiMouseEventArgs(mousePosition, inputData);
+        DragEnter?.Invoke(this, args);
+        TryExecute(OnDragEnter, args, this);
+    }
+    
+    private void RaiseDragLeave(Point mousePosition, UiInputData inputData)
+    {
+        var args = new UiMouseEventArgs(mousePosition, inputData);
+        DragLeave?.Invoke(this, args);
+        TryExecute(OnDragLeave, args, this);
+    }
+    
+    private void RaiseDrag(Point mousePosition, UiInputData inputData)
+    {
+        var args = new UiMouseEventArgs(mousePosition, inputData);
+        Drag?.Invoke(this, args);
+        TryExecute(OnDrag, args, this);
     }
 
     /// <summary>

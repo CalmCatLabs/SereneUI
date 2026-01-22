@@ -61,15 +61,7 @@ public class Button : Panel
         HorizontalAlignment = HorizontalAlignment.Left;
         VerticalAlignment   = VerticalAlignment.Top;
         IsFocusable = true;
-        
-        FocusEnter += OnFocusEnterHandler;
     }
-
-    private void OnFocusEnterHandler(object? sender, EventArgs e)
-    {
-        ApplyStyle(":focus");
-    }
-
 
     /// <inheritdoc />
     protected override void OnMeasure(in Point availableSize)
@@ -167,8 +159,22 @@ public class Button : Panel
             _pixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
             _pixel.SetData(new[] { Color.White });
         }
-
-        spriteBatch.Draw(_pixel, Bounds, BackgroundColor);
+        
+        if (BorderThickness.HasValue && BorderThickness.Value != Thickness.Zero)
+        {
+            spriteBatch.Draw(_pixel, Bounds, BorderColor ?? Color.Black);
+            var innerBounds = new Rectangle(
+                Bounds.X + BorderThickness.Value.Left, 
+                Bounds.Y + BorderThickness.Value.Top, 
+                Bounds.Width - (BorderThickness.Value.Left + BorderThickness.Value.Right), 
+                Bounds.Height - (BorderThickness.Value.Top + BorderThickness.Value.Bottom)
+            );
+            spriteBatch.Draw(_pixel, innerBounds, BackgroundColor);
+        }
+        else
+        {
+            spriteBatch.Draw(_pixel, Bounds, BackgroundColor);
+        }
         Content?.Draw(spriteBatch);
     }
     
@@ -191,16 +197,22 @@ public class Button : Panel
         if (!IsEnabled) return;
         if (_isMouseOver && !inputData.LeftMousePressed)
         {
-            ApplyStyle(":hover");
+            AddPseudoClass("hover");
+            if (PseudoClass is not null && PseudoClass.Contains("focus")) RemovePseudoClass("focus");
         }
         else if (_isMouseOver && inputData.LeftMousePressed)
         {
-            ApplyStyle(":active");
+            RemovePseudoClass("hover");
+            AddPseudoClass("active");
+            if (PseudoClass is not null && PseudoClass.Contains("focus")) RemovePseudoClass("focus");
         }
         else
         {
-            ApplyStyle();
+            RemovePseudoClass("hover");
+            RemovePseudoClass("active");
+            if (HasFocus && (PseudoClass is null || !PseudoClass.Contains("focus"))) AddPseudoClass("focus");
         }
+        ApplyStyle();
         
         if (_isMouseOver && inputData.LeftMouseReleased)
         {

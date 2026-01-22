@@ -5,7 +5,7 @@
         <TextBlock>{Binding Title}</TextBlock>
     </Panel>
     <Panel Margin="0,52,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-        <Button HorizontalAlignment="Left" OnClick="{Command ClickCommand}">
+        <Button Class="small" HorizontalAlignment="Left" OnClick="{Command ClickCommand}">
                 <TextBlock Class="arial_12">{Binding TestButtonText}</TextBlock>
         </Button>
     </Panel>
@@ -68,37 +68,41 @@
         </StackPanel>
     </Panel>
     <Panel Id="drag3"
-           PositionX="460" PositionY="290" Width="170" Height="100"
+           PositionX="460" PositionY="290" Width="270" 
            IsDraggable="true"
            OnMouseDown="{Command MouseDownCommand}"
            OnMouseUp="{Command MouseUpCommand}"
            OnMouseLeave="{Command MouseLeaveCommand}"
-           IsFocusable="true">
-        <StackPanel>
+           IsFocusable="false">
+        <StackPanel HorizontalAlignment="Stretch">
             <TextBlock Class="arial_12">I am draggable.</TextBlock>
-            <TextBlock Class="arial_12">{Binding LastDragEvent}</TextBlock>
+            <LineEdit Id="inputbox">
+            </LineEdit>
+            <Button Class="small" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                <TextBlock VerticalAlignment="Center" Class="arial_12">New Game</TextBlock>
+            </Button>
         </StackPanel>
     </Panel>
 
     <Panel Class="bottom-panel">
         <StackPanel Orientation="Horizontal">
             <Panel Padding="15,15,15,15" HorizontalAlignment="Stretch">
-                <Button HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                <Button Class="small" HorizontalAlignment="Stretch" VerticalAlignment="Center">
                     <TextBlock VerticalAlignment="Center" Class="arial_12">New Game</TextBlock>
                 </Button>
             </Panel>
             <Panel Padding="15,15,15,15" HorizontalAlignment="Stretch">
-                <Button HorizontalAlignment="Stretch"  VerticalAlignment="Center">
+                <Button Class="small" HorizontalAlignment="Stretch"  VerticalAlignment="Center">
                     <TextBlock VerticalAlignment="Center" Class="arial_12">Load Game</TextBlock>
                 </Button>
             </Panel>
             <Panel Padding="15,15,15,15" HorizontalAlignment="Stretch">
-                <Button HorizontalAlignment="Stretch"  VerticalAlignment="Center">
+                <Button Class="small" HorizontalAlignment="Stretch"  VerticalAlignment="Center">
                     <TextBlock VerticalAlignment="Center" Class="arial_12">Settings Game</TextBlock>
                 </Button>
             </Panel>
             <Panel Padding="15,15,15,15" HorizontalAlignment="Stretch">
-                <Button Class="exit" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                <Button Class="exit small" HorizontalAlignment="Stretch" VerticalAlignment="Center">
                     <TextBlock VerticalAlignment="Center" Class="arial_12">Exit</TextBlock>
                 </Button>
             </Panel>

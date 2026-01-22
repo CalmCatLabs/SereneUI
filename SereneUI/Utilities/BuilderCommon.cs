@@ -80,9 +80,9 @@ public static class BuilderCommon
             return new Microsoft.Xna.Framework.Color(r, g, b);
         }
 
-        if (s.StartsWith("rgb("))
+        if (s.StartsWith("rgb(") || s.StartsWith("rgba("))
         {
-            s = s.Replace("rgb(", "").Replace(")", "");
+            s = s.Replace("rgb(", "").Replace("rgba(", "").Replace(")", "");
             var values = s.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
             if (values.Length >= 3)
             {
@@ -91,12 +91,18 @@ public static class BuilderCommon
                 var b = byte.Parse(values[2]);
                 if (values.Length == 4)
                 {
-                    var a = byte.Parse(values[3]);
-                    return new Microsoft.Xna.Framework.Color(r, g, b, a);
+                    if (byte.TryParse(values[3], out var alpha))
+                    {
+                        return new Microsoft.Xna.Framework.Color(r, g, b, alpha);
+                    } 
+                    
+                    if (float.TryParse(values[3], out var alphaF))
+                    {
+                        return new Microsoft.Xna.Framework.Color(r, g, b, alphaF);
+                    }
                 }
                 return new Microsoft.Xna.Framework.Color(r, g, b);
             }
-            
         }
 
         // Named colors via reflection (Color.Red etc.)

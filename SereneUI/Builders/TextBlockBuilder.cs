@@ -28,16 +28,6 @@ public class TextBlockBuilder : IUiElementBuilder
         BuilderCommon.SetCommonAttributes(textBlock, node);
         textBlock.ApplyStyle();
         
-        if (node.Attributes.TryGetValue(nameof(textBlock.Font), out var fontName))
-        {
-            textBlock.Font = content.Load<SpriteFont>(fontName);
-        }
-        
-        if (node.Attributes.TryGetValue(nameof(textBlock.Color), out var color))
-        {
-            textBlock.Color = BuilderCommon.ParseColor(color);
-        }
-        
         return textBlock;
     }
 }

@@ -37,7 +37,9 @@ public interface IUiElement
     /// ToDo: make multiple possible.
     /// </summary>
     string? Class { get; set; }
-
+    
+    string? PseudoClass { get; }
+    
     /// <summary>
     /// Indicates if an element is draggable.
     /// </summary>
@@ -67,6 +69,16 @@ public interface IUiElement
     /// Just convenience to check if the position is a fixed one.
     /// </summary>
     public bool HasFixedPosition => PositionX.HasValue || PositionY.HasValue;
+    
+    /// <summary>
+    /// Sets the thickness of the Border around an element.
+    /// </summary>
+    public Thickness? BorderThickness { get; set; }
+    
+    /// <summary>
+    /// Border color. 
+    /// </summary>
+    public Color? BorderColor { get; set; }
     
     // Layout
     /// <summary>
@@ -123,6 +135,7 @@ public interface IUiElement
     /// </summary>
     /// <param name="pseudoClass">optional, to give pseudoclasses like :hover, :drag, ...</param>
     public void ApplyStyle(string pseudoClass = "");
+    
     
     /// <summary>
     /// Measure the sizes in the available space. 

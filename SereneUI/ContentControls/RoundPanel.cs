@@ -8,13 +8,12 @@ using SereneUI.Utilities;
 
 namespace SereneUI.ContentControls;
 
-public class Panel : ContentControlBase
+public class RoundPanel : ContentControlBase
 {
     private Texture2D? _pixel;
-
     public Color BackgroundColor { get; set; } = Color.White;
 
-    public Panel()
+    public RoundPanel()
     {
         IsVisible = true;
         IsEnabled = true;
@@ -138,7 +137,7 @@ public class Panel : ContentControlBase
         Content?.HandleInput(inputData);
         base.HandleInput(inputData);
         if (HasFocus && (PseudoClass is null || !PseudoClass.Contains("focus")))  AddPseudoClass("focus");
-        else if(!HasFocus && (PseudoClass is not null && PseudoClass.Contains("focus"))) RemovePseudoClass("focus");
+        else if(!HasFocus) RemovePseudoClass("focus");
     }
 
     protected override void OnDraw(SpriteBatch spriteBatch)
@@ -168,6 +167,8 @@ public class Panel : ContentControlBase
         {
             spriteBatch.Draw(_pixel, Bounds, BackgroundColor);
         }
+
+
         Content?.Draw(spriteBatch);
     }
 }

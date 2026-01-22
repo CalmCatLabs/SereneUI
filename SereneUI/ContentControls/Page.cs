@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Serene.Common.Extensions;
 using SereneUI.Base;
 using SereneUI.Shared.DataStructures;
+using SereneUI.Shared.EventArgs;
 using SereneUI.Shared.Interfaces;
 using SereneUI.Utilities;
 using HorizontalAlignment = SereneUI.Shared.Enums.HorizontalAlignment;
@@ -49,6 +50,8 @@ public class Page : ItemsControlBase
         localBounds = Rectangle.Empty;
         return element is not null && _layoutBounds.TryGetValue(element, out localBounds);
     }
+
+    public UiElementBase? _dragElement;
 
     protected override void OnMeasure(in Point availableSize)
     {
@@ -135,6 +138,12 @@ public class Page : ItemsControlBase
     {
         base.OnUpdate(gameTime, inputData);
         var childHit = HitTestTopMostChild(inputData.MousePosition);
+
+        if (_dragElement is not null)
+        {
+            _dragElement.HandleDragMove(inputData, inputData.MousePosition);
+        }
+        
         if (childHit is not null)
         {
             if (inputData.LeftMousePressed)
@@ -173,13 +182,13 @@ public class Page : ItemsControlBase
 
     private void OnFocusLeaveHandler(object? sender, EventArgs e)
     {
-        if (sender is UiElementBase focusableElement)
-        {
-            Debug.WriteLine($"{focusableElement.Id} lost focus.");
-            focusableElement.HasFocus = false;
-            if (focusableElement.Equals(_currentFocusElement))
-                _currentFocusElement = null;
-        }
+        // if (sender is UiElementBase focusableElement)
+        // {
+        //     Debug.WriteLine($"{focusableElement.Id} lost focus.");
+        //     //focusableElement.HasFocus = false;
+        //     if (focusableElement.Equals(_currentFocusElement))
+        //         _currentFocusElement = null;
+        // }
     }
 
     private void OnFocusEnterHandler(object? sender, EventArgs e)
@@ -187,7 +196,21 @@ public class Page : ItemsControlBase
         if (sender is UiElementBase focusableElement)
         {
             Debug.WriteLine($"{focusableElement.Id} got focus.");
+
+            var childHasFocus = false;
+            NodeUtility.ForAllNodesRun(focusableElement, node => childHasFocus = !childHasFocus && node.HasFocus);
+            if (childHasFocus)
+            {
+                return;
+            }
+            
             focusableElement.HasFocus = true;
+            
+            if (_currentFocusElement is not null)
+            {
+                _currentFocusElement.HasFocus = false;
+            }
+            
             _focuableElements.ForEach(fe =>
             {
                 if (fe == focusableElement) return;
@@ -195,5 +218,26 @@ public class Page : ItemsControlBase
             });
             _currentFocusElement = focusableElement;
         }
+        InvalidateMeasure();
+        InvalidateVisual();
+    }
+
+    public void OnDragHandler(object? sender, UiMouseEventArgs e)
+    {
+        
+    }
+
+    public void OnDragEnterHandler(object? sender, UiMouseEventArgs e)
+    {
+        if (sender is UiElementBase dragElement)
+        {
+            _dragElement = dragElement;
+        }
+    }
+
+    public void OnDragLeaveHandler(object? sender, UiMouseEventArgs e)
+    {
+        if (_dragElement is null) return;
+        _dragElement = null;
     }
 }

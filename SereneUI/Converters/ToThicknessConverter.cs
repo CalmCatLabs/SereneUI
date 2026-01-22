@@ -15,3 +15,13 @@ public class ToThicknessConverter : IConverter
         return true;
     }
 }
+
+[ConversionTargetType(typeof(Thickness?))]
+public class ToNullableThicknessConverter : IConverter
+{
+    public bool TryConvert(string value, out object? result)
+    {
+        result = BuilderCommon.ParseThickness(value);
+        return true;
+    }
+}
