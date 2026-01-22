@@ -183,4 +183,5 @@ public interface IUiElement
     bool HitTest(Point screenPoint);
     
     void HandleInput(UiInputData inputData);
+    void HandleTextInput(TextInputEventArgs textInputEventArgs);
 }

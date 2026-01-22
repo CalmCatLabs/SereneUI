@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using ExCSS;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Serene.Common.Extensions;
 using SereneUI.Shared.DataStructures;
@@ -49,9 +50,9 @@ public class BuildService(IServiceProvider serviceProvider)
     /// <param name="stylesheet">Stylesheet for the ui.</param>
     /// <param name="viewModel">optional view model.</param>
     /// <returns></returns>
-    public object? CreateUiElement(ContentManager content, UiNode node, Stylesheet? stylesheet, object? viewModel)
+    public object? CreateUiElement(Game game, ContentManager content, UiNode node, Stylesheet? stylesheet, object? viewModel)
     {
         var builder = _uiElementBuilders[node.TagName];
-        return builder.CreateUiElement(content, node, stylesheet, viewModel);
+        return builder.CreateUiElement(game, content, node, stylesheet, viewModel);
     }
 }

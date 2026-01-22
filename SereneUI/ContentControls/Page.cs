@@ -51,7 +51,8 @@ public class Page : ItemsControlBase
         return element is not null && _layoutBounds.TryGetValue(element, out localBounds);
     }
 
-    public UiElementBase? _dragElement;
+    private UiElementBase? _dragElement;
+    private UiElementBase? _focusedElement;
 
     protected override void OnMeasure(in Point availableSize)
     {
@@ -142,9 +143,8 @@ public class Page : ItemsControlBase
         if (_dragElement is not null)
         {
             _dragElement.HandleDragMove(inputData, inputData.MousePosition);
-        }
-        
-        if (childHit is not null)
+        } 
+        else if (childHit is not null)
         {
             if (inputData.LeftMousePressed)
             {
@@ -182,13 +182,6 @@ public class Page : ItemsControlBase
 
     private void OnFocusLeaveHandler(object? sender, EventArgs e)
     {
-        // if (sender is UiElementBase focusableElement)
-        // {
-        //     Debug.WriteLine($"{focusableElement.Id} lost focus.");
-        //     //focusableElement.HasFocus = false;
-        //     if (focusableElement.Equals(_currentFocusElement))
-        //         _currentFocusElement = null;
-        // }
     }
 
     private void OnFocusEnterHandler(object? sender, EventArgs e)
@@ -232,6 +225,7 @@ public class Page : ItemsControlBase
         if (sender is UiElementBase dragElement)
         {
             _dragElement = dragElement;
+            BringToFront(_dragElement);
         }
     }
 
@@ -239,5 +233,11 @@ public class Page : ItemsControlBase
     {
         if (_dragElement is null) return;
         _dragElement = null;
+    }
+
+    public void TextInputHandler(object? sender, TextInputEventArgs e)
+    {
+        if (_currentFocusElement is null) return;
+        _currentFocusElement.HandleTextInput(e);
     }
 }

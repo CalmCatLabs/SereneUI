@@ -14,6 +14,7 @@ using SereneUI.ContentControls;
 using SereneUI.Shared.DataStructures;
 using SereneUI.Shared.Enums;
 using SereneUI.Converters;
+using SereneUI.Utilities;
 
 namespace SereneUI;
 
@@ -26,7 +27,7 @@ public class SereneUiSystem(Game game, BuildService buildService)
     private bool _wasLeftMousePressed = false;
 
     public static Game Game { get; internal set; } 
-    
+    public KeyboardStateUtility? KeyboardUtility { get; private set; }
     public void Initialize(SpriteBatch spriteBatch)
     {
         _spriteBatch = spriteBatch;
@@ -35,6 +36,7 @@ public class SereneUiSystem(Game game, BuildService buildService)
         
         CreateOrResizeUiRenderTarget();
         Game = game;
+        KeyboardUtility = new KeyboardStateUtility(Keyboard.GetState());
     }
 
     public void Update(GameTime gameTime, SpriteBatch spriteBatch)
@@ -69,7 +71,7 @@ public class SereneUiSystem(Game game, BuildService buildService)
             
             if (isLeftButtonDown) _wasRightMousePressed = true;
             if (isRightButtonUp) _wasRightMousePressed = false;
-            
+            KeyboardUtility?.UpdateKeyStates();
             var input = new UiInputData(
                 mouseState.Position,
                 isLeftButtonDown,
@@ -78,8 +80,9 @@ public class SereneUiSystem(Game game, BuildService buildService)
                 isRightButtonDown,
                 isRightButtonPressed,
                 isRightButtonUp,
-                mouseState.ScrollWheelValue
-                );
+                mouseState.ScrollWheelValue,
+                KeyboardUtility
+            );
             _currentPage?.Update(gameTime, input);
         }
     }
@@ -97,7 +100,7 @@ public class SereneUiSystem(Game game, BuildService buildService)
         if (viewDoc.Root is null) throw new FileLoadException(viewFileName);
         
         var nodes = MakeNodes(viewDoc.Root);
-        var page = buildService.CreateUiElement(game.Content, nodes, null, viewModel) as Page;
+        var page = buildService.CreateUiElement(game, game.Content, nodes, null, viewModel) as Page;
         _currentPage = page ?? throw new FileLoadException(viewFileName);
     }
 

@@ -206,19 +206,23 @@ public class Button : Panel
             AddPseudoClass("active");
             if (PseudoClass is not null && PseudoClass.Contains("focus")) RemovePseudoClass("focus");
         }
-        else
+        else if (!_isMouseOver)
         {
             RemovePseudoClass("hover");
             RemovePseudoClass("active");
             if (HasFocus && (PseudoClass is null || !PseudoClass.Contains("focus"))) AddPseudoClass("focus");
         }
-        ApplyStyle();
         
         if (_isMouseOver && inputData.LeftMouseReleased)
         {
             RaiseClick(inputData.MousePosition, inputData);
+            AddPseudoClass("hover");
+            RemovePseudoClass("active");
             _wasMousePressed = false;
         }
+        InvalidateMeasure();
+        InvalidateVisual();
+        ApplyStyle();
     }
     
     private void RaiseClick(Microsoft.Xna.Framework.Point pos, UiInputData input)

@@ -403,16 +403,6 @@ public abstract class UiElementBase : ObservableObject, IUiElement
             InvalidateVisual();
             RaiseDragEnter(mousePosition, input);
         }
-        
-
-        if (_isDragging && input.LeftMouseReleased)
-        {
-            _isDragging = false;
-            ApplyStyle();
-            InvalidateMeasure();
-            InvalidateVisual();
-            RaiseDragLeave(mousePosition, input);
-        }
     }
 
     public void HandleDragMove(UiInputData input, Point mousePosition)
@@ -428,6 +418,15 @@ public abstract class UiElementBase : ObservableObject, IUiElement
             PositionX = Math.Min(_width - (int)Bounds.Width / 2, PositionX.Value); 
             PositionY = Math.Min(_height - (int)Bounds.Height / 2, PositionY.Value); 
             InvalidateArrange();
+        }
+        else if (_isDragging && input.LeftMouseReleased)
+        {
+            _isDragging = false;
+            RemovePseudoClass("drag");
+            InvalidateMeasure();
+            InvalidateVisual();
+            ApplyStyle();
+            RaiseDragLeave(mousePosition, input);
         }
     }
     
@@ -637,6 +636,10 @@ public abstract class UiElementBase : ObservableObject, IUiElement
 
         // Position bleibt, Größe wird festgezurrt
         return new Rectangle(rect.X, rect.Y, w, h);
+    }
+
+    public virtual void HandleTextInput(TextInputEventArgs textInputEventArgs)
+    {
     }
 
     public virtual void HandleInput(UiInputData inputData)

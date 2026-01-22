@@ -1,5 +1,6 @@
 ﻿
 using ExCSS;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using SereneUI.ContentControls;
 using SereneUI.Shared.Attributes;
@@ -18,7 +19,7 @@ namespace SereneUI.Builders;
 public class StackPanelBuilder(BuildService buildService): IUiElementBuilder
 {
     /// <inheritdoc />
-    public object? CreateUiElement(ContentManager content, UiNode node, Stylesheet? stylesheet, object? viewModel)
+    public object? CreateUiElement(Game game, ContentManager content, UiNode node, Stylesheet? stylesheet, object? viewModel)
     {
         var panel = new StackPanel
         {
@@ -33,7 +34,7 @@ public class StackPanelBuilder(BuildService buildService): IUiElementBuilder
         
         node.Children.ForEach(child =>
         {
-            if (buildService.CreateUiElement(content, child, stylesheet, viewModel) is IUiElement uiElement)
+            if (buildService.CreateUiElement(game, content, child, stylesheet, viewModel) is IUiElement uiElement)
             {
                 panel.AddChildren(uiElement);
             }

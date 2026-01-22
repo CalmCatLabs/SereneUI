@@ -1,4 +1,5 @@
 ﻿using ExCSS;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using SereneUI.ContentControls;
@@ -16,7 +17,7 @@ namespace SereneUI.Builders;
 public class TextBlockBuilder : IUiElementBuilder
 {
     /// <inheritdoc />
-    public object? CreateUiElement(ContentManager content, UiNode node, Stylesheet? stylesheet, object? viewModel)
+    public object? CreateUiElement(Game game, ContentManager content, UiNode node, Stylesheet? stylesheet, object? viewModel)
     {
         var textBlock = new TextBlock
         {

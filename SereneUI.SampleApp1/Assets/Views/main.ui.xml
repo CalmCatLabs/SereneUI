@@ -68,15 +68,17 @@
         </StackPanel>
     </Panel>
     <Panel Id="drag3"
-           PositionX="460" PositionY="290" Width="270" 
-           IsDraggable="true"
-           OnMouseDown="{Command MouseDownCommand}"
-           OnMouseUp="{Command MouseUpCommand}"
-           OnMouseLeave="{Command MouseLeaveCommand}"
-           IsFocusable="false">
-        <StackPanel HorizontalAlignment="Stretch">
-            <TextBlock Class="arial_12">I am draggable.</TextBlock>
-            <LineEdit Id="inputbox">
+           PositionX="460" PositionY="290" Width="300" Height="250"
+           IsDraggable="true">
+        <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Panel>
+                <TextBlock>Write something</TextBlock>
+            </Panel>
+            <LineEdit Id="inputbox" Placeholder="Say something nice">
+            </LineEdit>
+            <LineEdit Id="inputbox" Placeholder="Say something funny">
+            </LineEdit>
+            <LineEdit Id="inputbox" Placeholder="Say something smart">
             </LineEdit>
             <Button Class="small" HorizontalAlignment="Stretch" VerticalAlignment="Center">
                 <TextBlock VerticalAlignment="Center" Class="arial_12">New Game</TextBlock>

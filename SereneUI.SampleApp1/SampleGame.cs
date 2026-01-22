@@ -26,8 +26,8 @@ public class SampleGame : Game
         _serviceProvider = services.BuildServiceProvider();
         
         var graphics = new GraphicsDeviceManager(this);
-        graphics.PreferredBackBufferWidth = 800;
-        graphics.PreferredBackBufferHeight = 600;
+        graphics.PreferredBackBufferWidth = 1280;
+        graphics.PreferredBackBufferHeight = 1024;
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
         _sereneUi = _serviceProvider.GetRequiredService<SereneUiSystem>();

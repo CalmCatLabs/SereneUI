@@ -1,4 +1,5 @@
 ﻿using ExCSS;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using SereneUI.Shared.DataStructures;
 
@@ -17,5 +18,5 @@ public interface IUiElementBuilder
     /// <param name="stylesheet">ExCSS Stylesheet object.</param>
     /// <param name="viewModel">An optional view model/controler.</param>
     /// <returns></returns>
-    public object? CreateUiElement(ContentManager content, UiNode node, Stylesheet? stylesheet, object? viewModel);
+    public object? CreateUiElement(Game game, ContentManager content, UiNode node, Stylesheet? stylesheet, object? viewModel);
 }

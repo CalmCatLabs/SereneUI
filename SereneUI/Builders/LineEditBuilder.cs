@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ExCSS;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using SereneUI.ContentControls;
 using SereneUI.Shared.Attributes;
@@ -15,7 +16,7 @@ namespace SereneUI.Builders;
 [BuilderTargetType(typeof(LineEdit))]
 public class LineEditBuilder(BuildService buildService): IUiElementBuilder
 {
-    public object? CreateUiElement(ContentManager content, UiNode node, Stylesheet? stylesheet, object? viewModel)
+    public object? CreateUiElement(Game game, ContentManager content, UiNode node, Stylesheet? stylesheet, object? viewModel)
     {
         var lineEdit = new LineEdit
         {
@@ -23,29 +24,28 @@ public class LineEditBuilder(BuildService buildService): IUiElementBuilder
             DataContext = viewModel,
             MarkupExpressions = node.MarkupExpressions
         };
-        BuilderCommon.SetCommonAttributes(lineEdit, node);
         node.Children.Add(new UiNode
         {
             TagName = "TextBlock",
-            InnerText = "Hallo Welt",
             Attributes = new ()
             {
-                {"Class", ".line-edit"}
+                {"Class", "line_edit"}
             },
         });
+        BuilderCommon.SetCommonAttributes(lineEdit, node);
         
-        var textBlock = buildService.CreateUiElement(content, node.Children.First(), stylesheet, viewModel) as TextBlock;
+        var textBlock = buildService.CreateUiElement(game, content, node.Children.First(), stylesheet, viewModel) as TextBlock;
         if (textBlock != null)
         {
             BuilderCommon.SetCommonAttributes(textBlock, node.Children.First());
             textBlock.Parent = lineEdit;
             lineEdit.Content = textBlock;
             textBlock.Stylesheet = stylesheet;
+            textBlock.Text = lineEdit.Placeholder;
             textBlock.ApplyStyle();
         }
 
         lineEdit.ApplyStyle();
-        
         return lineEdit;
     }
 }

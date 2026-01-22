@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using ExCSS;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Serene.Common.Extensions;
 using SereneUI.Base;
@@ -23,7 +24,7 @@ namespace SereneUI.Builders;
 public class PageBuilder(IServiceProvider services, BuildService buildService) : IUiElementBuilder
 {
     /// <inheritdoc />
-    public object? CreateUiElement(ContentManager content, UiNode node, Stylesheet? stylesheet, object? viewModel)
+    public object? CreateUiElement(Game game, ContentManager content, UiNode node, Stylesheet? stylesheet, object? viewModel)
     {
         var page = new Page
         {
@@ -55,7 +56,7 @@ public class PageBuilder(IServiceProvider services, BuildService buildService) :
         
         node.Children.ForEach(child =>
         {
-            if (buildService.CreateUiElement(content, child, page.Stylesheet, page.DataContext) is IUiElement uiElement)
+            if (buildService.CreateUiElement(game, content, child, page.Stylesheet, page.DataContext) is IUiElement uiElement)
             {
                 page.AddChildren(uiElement);
             }
@@ -70,13 +71,15 @@ public class PageBuilder(IServiceProvider services, BuildService buildService) :
         NodeUtility.ForAllNodesRun(page, uiElement =>
         {
             uiElement.ApplyStyle();
-            if (uiElement is UiElementBase ue)
+            if (uiElement is UiElementBase { IsDraggable: true, IsEnabled: true } ueDrag)
             {
-                ue.Drag += page.OnDragHandler;
-                ue.DragEnter += page.OnDragEnterHandler;
-                ue.DragLeave += page.OnDragLeaveHandler;
+                ueDrag.Drag += page.OnDragHandler;
+                ueDrag.DragEnter += page.OnDragEnterHandler;
+                ueDrag.DragLeave += page.OnDragLeaveHandler;
             }
         });
+
+        game.Window.TextInput += page.TextInputHandler;
         return page;
     }
 

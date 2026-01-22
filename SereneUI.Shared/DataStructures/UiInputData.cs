@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace SereneUI.Shared.DataStructures;
 
@@ -21,5 +22,6 @@ public readonly record struct  UiInputData(
     bool RightMouseDown,
     bool RightMousePressed,
     bool RightMouseReleased,
-    int ScrollDelta
+    int ScrollDelta,
+    KeyboardStateUtility? KeyboardState = null
     );

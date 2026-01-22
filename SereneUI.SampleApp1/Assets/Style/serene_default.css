@@ -46,11 +46,18 @@ TextBlock.arial_12 {
     Font: Fonts/arial_12;
 }
 
-TextBlock.line-edit {
+TextBlock.line_edit {
     Font: Fonts/arial_12;
     HorizontalAlignment: Left;
     VerticalAlignment: Center;
-    Color: #351D2E;
+    Color: #957D8E;
+}
+
+TextBlock.line_edit:focus {
+    Font: Fonts/arial_12;
+    HorizontalAlignment: Left;
+    VerticalAlignment: Center;
+    Color: #351D2Eff;
 }
 
 Button {
@@ -101,32 +108,42 @@ Button.exit {
 LineEdit {
     Margin: 0,5,0,5;
     Padding: 5,5,5,5;
-    BackgroundColor: #a998a4;
+    BackgroundColor: #f9e8f4;
     BorderThickness: 0,0,0,3;
     BorderColor: #380A11;
     Color: #351D2E;
     HorizontalAlignment: Stretch;
+    Font: Fonts/arial_12;
+    Height: 28;
 }
 
 LineEdit:focus {
-    BackgroundColor: #a998a4dd;
+    BackgroundColor: #feefff;
     Color: #351D2E;
+    BorderThickness: 1, 1, 1, 1;
+    BorderColor: #380A11;
 }
 
 #drag {
     BackgroundColor: #97DFFC99;
+    BorderThickness: 1, 1, 1, 1;
+    BorderColor: #380A11;
 }
 
 #drag1 {
     BackgroundColor: #858AE399;
+    BorderThickness: 1, 1, 1, 1;
+    BorderColor: #380A11;
 }
 
 #drag2 {
     BackgroundColor: #613DC199;
+    BorderThickness: 1, 1, 1, 1;
+    BorderColor: #380A11;
 }
 
 #drag3 {
-    BackgroundColor: #4E148C99;
-    BorderThickness: 10, 5, 10, 5;
-    BorderColor: #6b128bff;
+    BackgroundColor: #E8DBD8;
+    BorderThickness: 1, 1, 1, 1;
+    BorderColor: #380A11;
 }
