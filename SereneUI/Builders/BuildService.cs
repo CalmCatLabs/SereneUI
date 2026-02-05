@@ -52,7 +52,11 @@ public class BuildService(IServiceProvider serviceProvider)
     /// <returns></returns>
     public object? CreateUiElement(Game game, ContentManager content, UiNode node, Stylesheet? stylesheet, object? viewModel)
     {
-        var builder = _uiElementBuilders[node.TagName];
-        return builder.CreateUiElement(game, content, node, stylesheet, viewModel);
+        if (_uiElementBuilders.TryGetValue(node.TagName, out var builder))
+        {
+            return builder.CreateUiElement(game, content, node, stylesheet, viewModel);
+        }
+
+        return null;
     }
 }

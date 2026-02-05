@@ -74,12 +74,13 @@
             <Panel>
                 <TextBlock>Write something</TextBlock>
             </Panel>
-            <LineEdit Id="inputbox" Placeholder="Say something nice">
+            <LineEdit Id="inputbox" Placeholder="Say something nice" CursorBlinkSpeed="300">
             </LineEdit>
-            <LineEdit Id="inputbox" Placeholder="Say something funny">
+            <LineEdit Id="inputbox" Placeholder="Say something funny" CursorBlinkSpeed="100">
             </LineEdit>
-            <LineEdit Id="inputbox" Placeholder="Say something smart">
+            <LineEdit Id="inputbox" Placeholder="Say something smart" CursorBlinkSpeed="800">
             </LineEdit>
+            <NumberInput Id="numberinput"></NumberInput>
             <Button Class="small" HorizontalAlignment="Stretch" VerticalAlignment="Center">
                 <TextBlock VerticalAlignment="Center" Class="arial_12">New Game</TextBlock>
             </Button>
